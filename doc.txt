@@ -1,0 +1,6 @@
+https://github.com/ssloy/tinyraytracer/wiki/Part-1:-understandable-raytracing
+http://www.lighthouse3d.com/tutorials/maths/ray-sphere-intersection/
+https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-ray-tracing/how-does-it-work
+https://github.com/Kikoman90/RTv1
+https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-837-computer-graphics-fall-2012/lecture-notes/MIT6_837F12_Lec11.pdf
+https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-837-computer-graphics-fall-2012/lecture-notes/

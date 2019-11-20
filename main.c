@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/20 19:46:12 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/20 19:57:56 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int main(void)
 	for(size_t i = 0; i < height; i++) {
 		for(size_t j = 0; j < width; j++) {
 			framebuffer[i][j] = malloc(sizeof(vect3f));
-			if (sqrt(pow(i - sphere.pos.x,2) +pow(j - sphere.pos.y,2)) < sphere.r)
+			if (ray_intersect())
 				mlx_pixel_put(mlx, mlx_window, i, j, 0x6CF42B);
 			else
 				mlx_pixel_put(mlx, mlx_window, i, j, 0xE2FFB2);
@@ -56,3 +56,4 @@ int main(void)
 	mlx_loop(mlx);
 }
 
+// distance = sqrt(pow(i - sphere.pos.x,2) +pow(j - sphere.pos.y,2)) < sphere.r
