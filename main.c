@@ -6,43 +6,53 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/07 19:19:55 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/20 19:46:12 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <mlx.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "miniRT.h"
+
+vect3f	*ft_fill(float a, float b, float c, vect3f *out)
+{
+	out->x = a;
+	out->y = b;
+	out->z = c;
+	return (out);
+}
+
+int	ray_intersect()
+{
+
+}
 
 int main(void)
 {
-    int i;
-    int j;
+	int width = 500;
+	int height = 500;
 	t_sphere sphere;
-	long distance;
-	int color = 0xFFFFFF;
+	vect3f *framebuffer[width][height];
 
-	sphere.r = 127;
-	sphere.x = 250;
-	sphere.y = 250;
 	void *mlx = mlx_init();
-	void *mlxwindow = mlx_new_window(mlx, 500, 500, "yes");
-	i = 0;
-	while(i <= 750)
-	{
-		j = 0;
-		while(j <= 1334)
-		{
-			distance = sqrt((double)(i - sphere.x)*(i - sphere.x) + (j - sphere.y)*(j - sphere.y));
-			if (distance < sphere.r)
-			{
-				mlx_pixel_put(mlx, mlxwindow, i, j, color);
-				color = color - 0x000001;
-			}
-			j++;
-		}
-		i++;
-	}
+	void *mlx_window = mlx_new_window(mlx, width, height, "Image");
+	
+	sphere.pos.x = 250.0;
+	sphere.pos.y = 250.0;
+	sphere.pos.z = 20.0;
+	sphere.r = 50.0;
+
+	for(size_t i = 0; i < height; i++) {
+		for(size_t j = 0; j < width; j++) {
+			framebuffer[i][j] = malloc(sizeof(vect3f));
+			if (sqrt(pow(i - sphere.pos.x,2) +pow(j - sphere.pos.y,2)) < sphere.r)
+				mlx_pixel_put(mlx, mlx_window, i, j, 0x6CF42B);
+			else
+				mlx_pixel_put(mlx, mlx_window, i, j, 0xE2FFB2);
+        }
+    }
 	mlx_loop(mlx);
 }
+

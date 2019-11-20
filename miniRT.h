@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/07 16:24:59 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/20 19:26:09 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,22 +15,19 @@
 
 # include <math.h>
 # include <mlx.h>
-# include "libft/libft.h"
 
-typedef struct	s_rectangle
+typedef	struct s_struct
 {
-	int	height;
-	int	width;
-	int	depth;
-	int x;
-	int y;
-} rectangle;
+	float x;
+	float y;
+	float z;
+}				vect3f;
 
-typedef struct	s_sphere
+typedef struct s_sphere
 {
-	int r;
-	int x;
-	int y;
-} 				t_sphere;
+	vect3f	pos;
+	float	r;
+}				t_sphere;
+
 
 #endif
