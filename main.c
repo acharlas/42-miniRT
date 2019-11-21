@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/21 15:26:00 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/21 17:00:29 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ vect3f	ft_fill(float a, float b, float c)
 	out.z = c;
 	return (out);
 }
+
+int scene_intersect(vect3f orig, vect3f dir, )
 
 int	ray_intersect(const vect3f orig, const vect3f dir, float t0, t_sphere sphere)
 {
@@ -62,37 +64,54 @@ vect3f cast_ray(vect3f orig, vect3f dir, t_sphere sphere)
 	return ft_fill(0.4, 0.4, 0.3);
 }
 
-int main(void)
+void render(const t_sphere sphere, const int width, const int height, void *mlx, void *mlx_window)
 {
-	const int width = 500;
-	const int height = 500;
-	const float	fov	= M_PI / 2;
-	t_sphere sphere;
-	vect3f framebuffer[width][height];
-
-	void *mlx = mlx_init();
-	void *mlx_window = mlx_new_window(mlx, width, height, "Image");
 	
-	sphere.pos.x = -3.0;
-	sphere.pos.y = 0.0;
-	sphere.pos.z = -16.0;
-	sphere.r = 2.0;
+	const float	fov	= M_PI / 2;
+	vect3f framebuffer[width][height];
 	vect3f orig = ft_fill(0,0,0);
-	for(size_t i = 0; i < height; i++) {
-		for(size_t j = 0; j < width; j++) {
+
+	for(size_t i = 0; i < width; i++)
+	{
+		for(size_t j = 0; j < height; j++)
+		{
 			float x =  (2*(i + 0.5)/(float)width  - 1)*tan(fov/2.)*width/(float)height;
 			float y = -(2*(j + 0.5)/(float)height - 1)*tan(fov/2.);
 			vect3f dir = normalize(ft_fill(x, y, -1));
 			framebuffer[i][j] = cast_ray(orig, dir, sphere);
         }
     }
-	for(size_t i = 0; i < height; i++) {
-		for(size_t j = 0; j < width; j++) {
+	for(size_t i = 0; i < width; i++)
+	{
+		for(size_t j = 0; j < height; j++)
+		{
 			int color = (int)(255 * framebuffer[i][j].x) << 16 | (int)(255 * framebuffer[i][j].y) << 8 | (int)(255 * framebuffer[i][j].z);
 			mlx_pixel_put(mlx, mlx_window, i, j, color);
         }
     }
-	mlx_loop(mlx);
+	
 }
 
-// distance = sqrt(pow(i - sphere.pos.x,2) +pow(j - sphere.pos.y,2)) < sphere.r
+int main(void)
+{
+	const int width = 1000;
+	const int height = 600;
+	
+	t_sphere sphere;
+	sphere.pos.x = -3;
+	sphere.pos.y = 0;
+	sphere.pos.z = -16;
+	sphere.r = 2;
+
+	t_sphere sphere2;
+	sphere2.pos.x = -20;
+	sphere2.pos.y = 0;
+	sphere2.pos.z = -50;
+	sphere2.r = 2;
+	
+	void *mlx = mlx_init();
+	void *mlx_window = mlx_new_window(mlx, width, height, "Image");
+	render(sphere, width, height, mlx, mlx_window);
+	render(sphere2, width, height, mlx, mlx_window);
+	mlx_loop(mlx);
+}
