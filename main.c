@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/22 13:50:53 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/22 15:29:57 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,15 @@ int	ft_lstsize(t_listobj *lst)
 	return (i);
 }
 
+vect3f	normalize(vect3f this)
+{
+	vect3f out;
+	out.x = this.x / sqrt(pow(this.x,2) + pow(this.y,2) + pow(this.z,2));
+	out.y = this.y / sqrt(pow(this.x,2) + pow(this.y,2) + pow(this.z,2));
+	out.z = this.z / sqrt(pow(this.x,2) + pow(this.y,2) + pow(this.z,2));
+	return (out);
+}
+
 int	ray_intersect(const vect3f orig, const vect3f dir, float *t0, t_listobj *listobj)
 {
 	vect3f L = ft_fill(((t_sphere *)(listobj->data))->pos.x - orig.x, ((t_sphere *)(listobj->data))->pos.y - orig.y, ((t_sphere *)(listobj->data))->pos.z - orig.z);
@@ -61,37 +70,25 @@ int	ray_intersect(const vect3f orig, const vect3f dir, float *t0, t_listobj *lis
 int scene_intersect(vect3f orig, vect3f dir, t_listobj *listobj)
 {
 	float spheres_dist = FLT_MAX;
-	int i = 2;
-	while(i)
+	while(listobj)
 	{
 		float dist_i;
 		if(ray_intersect(orig, dir, &dist_i, listobj) && dist_i < spheres_dist)
 		{
 				spheres_dist = dist_i;
 		}
-		i--;
 		listobj = listobj->next;
 	}
 	return (spheres_dist < 1000);
 }
 
 
-
-vect3f	normalize(vect3f this)
-{
-	vect3f out;
-	out.x = this.x / sqrt(pow(this.x,2) + pow(this.y,2) + pow(this.z,2));
-	out.y = this.y / sqrt(pow(this.x,2) + pow(this.y,2) + pow(this.z,2));
-	out.z = this.z / sqrt(pow(this.x,2) + pow(this.y,2) + pow(this.z,2));
-	return (out);
-}
-
 vect3f cast_ray(vect3f orig, vect3f dir, t_listobj *listobj)
 {
 		float sphere_dist = FLT_MAX;
 		if (!scene_intersect(orig, dir, listobj))
 		{
-			return (ft_fill(0.2, 0.7, 0.8));
+			return (ft_fill(0.60, 0.99, 0.99));
 		}
 		return (((t_sphere *)(listobj->data))->color);
 }
@@ -162,7 +159,7 @@ int main(void)
 	
 	listobj = ft_lstadd_front(listobj, ft_lstnew(sphere));
 	sphere2 = malloc(sizeof(t_sphere));
-	sphere2->pos = ft_fill(-20, 0, -16);
+	sphere2->pos = ft_fill(20, 20, -56);
 	sphere2->r = 2;
 	sphere2->color = ft_fill(0.949, 0.541, 0.835);
 	listobj = ft_lstadd_front(listobj, ft_lstnew(sphere2));
