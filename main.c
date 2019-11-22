@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/22 17:14:52 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/22 17:51:43 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,9 +98,11 @@ void render(t_listobj *listobj, const int width, const int height, void *mlx, vo
 {
 	
 	const float	fov	= M_PI / 2;
-	vect3f framebuffer[width][height];
+	vect3f *framebuffer[height];
+	for (int i = 0 ; i < height; i++)
+	framebuffer[i] = malloc(sizeof(vect3f) * width);
 	vect3f orig = ft_fill(0,0,0);
-
+	
 	for(size_t i = 0; i < width; i++)
 	{
 		for(size_t j = 0; j < height; j++)
@@ -117,9 +119,10 @@ void render(t_listobj *listobj, const int width, const int height, void *mlx, vo
 		{
 			int color = (int)(255 * framebuffer[i][j].x) << 16 | (int)(255 * framebuffer[i][j].y) << 8 | (int)(255 * framebuffer[i][j].z);
 			mlx_pixel_put(mlx, mlx_window, i, j, color);
+			
         }
+		free(framebuffer[i]);
     }
-	
 }
 
 t_listobj	*ft_lstnew(void *content)
@@ -160,15 +163,15 @@ int main(void)
 	
 	ft_lstadd_front(&listobj, ft_lstnew(sphere));
 	sphere2 = malloc(sizeof(t_sphere));
-	sphere2->pos = ft_fill(10, 0, -25);
-	sphere2->r = 2;
+	sphere2->pos = ft_fill(0, 0, -25);
+	sphere2->r = 10;
 	sphere2->color = ft_fill(0.486, 0.27, 0.65);
 	ft_lstadd_front(&listobj, ft_lstnew(sphere2));
 	sphere3 = malloc(sizeof(t_sphere));
-	sphere3->pos = ft_fill(20, 0, -35);
-	sphere3->r = 2;
+	sphere3->pos = ft_fill(0, 0, -35);
+	sphere3->r = 4;
 	sphere3->color = ft_fill(0.27, 0.08, 0.431);
-	ft_lstadd_front(&listobj, ft_lstnew(sphere));
+	ft_lstadd_front(&listobj, ft_lstnew(sphere3));
 	void *mlx = mlx_init();
 	void *mlx_window = mlx_new_window(mlx, width, height, "Image");
 	render(listobj, width, height, mlx, mlx_window);
