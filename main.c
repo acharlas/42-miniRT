@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/22 10:10:06 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/22 13:50:53 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,42 @@ int	ft_lstsize(t_listobj *lst)
 	return (i);
 }
 
-
-// int scene_intersect(vect3f orig, vect3f dir, )
-
-int	ray_intersect(const vect3f orig, const vect3f dir, float t0, t_listobj *listobj)
+int	ray_intersect(const vect3f orig, const vect3f dir, float *t0, t_listobj *listobj)
 {
-	//vect3f L = ft_fill(sphere.pos.x - orig.x, sphere.pos.y - orig.y, sphere.pos.z - orig.z);
+	vect3f L = ft_fill(((t_sphere *)(listobj->data))->pos.x - orig.x, ((t_sphere *)(listobj->data))->pos.y - orig.y, ((t_sphere *)(listobj->data))->pos.z - orig.z);
+	float tca = L.x * dir.x + L.y * dir.y + L.z * dir.z;
+    float d2 = (L.x * L.x + L.y * L.y + L.z * L.z) - (tca*tca);
+    if (d2 > ((t_sphere *)(listobj->data))->r*((t_sphere *)(listobj->data))->r)
+		return 0;
+    float thc = sqrtf(((t_sphere *)(listobj->data))->r*((t_sphere *)(listobj->data))->r - d2);
+    *t0       = tca - thc;
+    float t1 = tca + thc;
+    if (*t0 < 0) 
+		*t0 = t1;
+    if (t0 < 0) 
+		return 0;
+    return 1;
+
 }
+
+int scene_intersect(vect3f orig, vect3f dir, t_listobj *listobj)
+{
+	float spheres_dist = FLT_MAX;
+	int i = 2;
+	while(i)
+	{
+		float dist_i;
+		if(ray_intersect(orig, dir, &dist_i, listobj) && dist_i < spheres_dist)
+		{
+				spheres_dist = dist_i;
+		}
+		i--;
+		listobj = listobj->next;
+	}
+	return (spheres_dist < 1000);
+}
+
+
 
 vect3f	normalize(vect3f this)
 {
@@ -60,11 +89,11 @@ vect3f	normalize(vect3f this)
 vect3f cast_ray(vect3f orig, vect3f dir, t_listobj *listobj)
 {
 		float sphere_dist = FLT_MAX;
-		if (!ray_intersect(orig, dir, sphere_dist, listobj))
+		if (!scene_intersect(orig, dir, listobj))
 		{
 			return (ft_fill(0.2, 0.7, 0.8));
 		}
-		return (listobj->data.sphere->color);
+		return (((t_sphere *)(listobj->data))->color);
 }
 
 void render(t_listobj *listobj, const int width, const int height, void *mlx, void *mlx_window)
@@ -106,15 +135,16 @@ t_listobj	*ft_lstnew(void *content)
 	return (list);
 }
 
-void	ft_lstadd_front(t_listobj **alst, t_listobj *new)
+t_listobj *ft_lstadd_front(t_listobj *alst, t_listobj *new)
 {
 	if (!alst)
-		return ;
+		return (alst);
 	if (new)
 	{
-		new->next = *alst;
-		*alst = new;
+		new->next = alst;
+		alst = new;
 	}
+	return (alst);
 }
 
 int main(void)
@@ -124,24 +154,18 @@ int main(void)
 	t_listobj *listobj;
 	
 	t_sphere *sphere;
-	sphere->pos.x = -3;
-	sphere->pos.y = 0;
-	sphere->pos.z = -16;
-	sphere->r = 2;
-	sphere->color.x = 1.0;
-	sphere->color.y = 0.0;
-	sphere->color.z = 0.0;
-
 	t_sphere *sphere2;
-	sphere2->pos.x = -20;
-	sphere2->pos.y = 0;
-	sphere2->pos.z = -50;
+	sphere = malloc(sizeof(t_sphere));
+	sphere->pos = ft_fill(20, 20, -50);
+	sphere->r = 2;
+	sphere->color = ft_fill(1, 0, 0);
+	
+	listobj = ft_lstadd_front(listobj, ft_lstnew(sphere));
+	sphere2 = malloc(sizeof(t_sphere));
+	sphere2->pos = ft_fill(-20, 0, -16);
 	sphere2->r = 2;
-	sphere2->color.x = 0.8;
-	sphere2->color.y = 1.0;
-	sphere2->color.z = 0.0;
-	ft_lstadd_front(&listobj, ft_lstnew(sphere));
-	ft_lstadd_front(&listobj, ft_lstnew(sphere2));
+	sphere2->color = ft_fill(0.949, 0.541, 0.835);
+	listobj = ft_lstadd_front(listobj, ft_lstnew(sphere2));
 	void *mlx = mlx_init();
 	void *mlx_window = mlx_new_window(mlx, width, height, "Image");
 	render(listobj, width, height, mlx, mlx_window);

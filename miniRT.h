@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/22 09:49:00 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/22 12:17:54 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ typedef struct s_camera
 typedef  struct s_listobj
 {
 	void	*data;
-	void	*next;
+	struct s_listobj	*next;
 }				t_listobj;
 
 
