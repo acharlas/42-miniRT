@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/22 17:51:43 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/22 18:37:26 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,13 @@ vect3f	ft_fill(float a, float b, float c)
 	out.y = b;
 	out.z = c;
 	return (out);
+}
+
+float maxf(float a, float b)
+{
+	if (a >= b)
+		return (a);
+	return(b);
 }
 
 int	ft_lstsize(t_listobj *lst)
@@ -67,7 +74,7 @@ int	ray_intersect(const vect3f orig, const vect3f dir, float *t0, t_listobj *lis
 
 }
 
-int scene_intersect(vect3f orig, vect3f dir, t_listobj *listobj, vect3f *color)
+int scene_intersect(vect3f orig, vect3f dir, t_listobj *listobj, vect3f *hit, vect3f *N,vect3f *color)
 {
 	float spheres_dist = FLT_MAX;
 	while(listobj)
@@ -77,24 +84,35 @@ int scene_intersect(vect3f orig, vect3f dir, t_listobj *listobj, vect3f *color)
 		{
 				*color = ((t_sphere *)(listobj->data))->color;
 				spheres_dist = dist_i;
+				*hit = ft_fill(orig.x + dir.x*dist_i, orig.y + dir.y*dist_i, orig.z + dir.z*dist_i);
+				*N = normalize(ft_fill(hit->x - ((t_sphere *)(listobj->data))->pos.x, hit->y - ((t_sphere *)(listobj->data))->pos.y, hit->z - ((t_sphere *)(listobj->data))->pos.z));
 		}
 		listobj = listobj->next;
 	}
 	return (spheres_dist < 1000);
 }
 
-vect3f cast_ray(vect3f orig, vect3f dir, t_listobj *listobj)
+vect3f cast_ray(vect3f orig, vect3f dir, t_listobj *listobj, t_listobj *listlight)
 {
 		float sphere_dist = FLT_MAX;
 		vect3f color;
-		if (!scene_intersect(orig, dir, listobj, &color))
-		{
+		vect3f point;
+		vect3f N;
+		if (!scene_intersect(orig, dir, listobj, &point, &N,&color))
 			return (ft_fill(0.57, 0, 0.25));
+		float diffuse_light_intensity = 0;
+		while(listlight)
+		{
+			vect3f light_dir = normalize(ft_fill(((t_light *)(listlight->data))->pos.x - point.x,((t_light *)(listlight->data))->pos.y - point.y,((t_light *)(listlight->data))->pos.z - point.z));
+			diffuse_light_intensity += ((t_light *)(listlight->data))->intensity * maxf(0,(light_dir.x * N.x + light_dir.y * N.y +light_dir.z * N.z));
+			listlight = listlight->next;
+			
 		}
+		color = ft_fill(color.x * diffuse_light_intensity, color.y * diffuse_light_intensity, color.z * diffuse_light_intensity);
 		return (color);
 }
 
-void render(t_listobj *listobj, const int width, const int height, void *mlx, void *mlx_window)
+void render(t_listobj *listobj, t_listobj *listlight,const int width, const int height, void *mlx, void *mlx_window)
 {
 	
 	const float	fov	= M_PI / 2;
@@ -110,7 +128,7 @@ void render(t_listobj *listobj, const int width, const int height, void *mlx, vo
 			float x =  (2*(i + 0.5)/(float)width  - 1)*tan(fov/2.)*width/(float)height;
 			float y = -(2*(j + 0.5)/(float)height - 1)*tan(fov/2.);
 			vect3f dir = normalize(ft_fill(x, y, -1));
-			framebuffer[i][j] = cast_ray(orig, dir, listobj);
+			framebuffer[i][j] = cast_ray(orig, dir, listobj, listlight);
         }
     }
 	for(size_t i = 0; i < width; i++)
@@ -149,31 +167,37 @@ void ft_lstadd_front(t_listobj **alst, t_listobj *new)
 
 int main(void)
 {
-	const int width = 1000;
-	const int height = 1000;
+	const int width = 500;
+	const int height = 500;
 	t_listobj *listobj = NULL;
+	t_listobj *listlight = NULL;
 	
 	t_sphere *sphere;
 	t_sphere *sphere2;
 	t_sphere *sphere3;
 	sphere = malloc(sizeof(t_sphere));
-	sphere->pos = ft_fill(0, 0, -15);
+	sphere->pos = ft_fill(-3, 0, -16);
 	sphere->r = 2;
 	sphere->color = ft_fill(0.87, 0.70, 1);
 	
 	ft_lstadd_front(&listobj, ft_lstnew(sphere));
 	sphere2 = malloc(sizeof(t_sphere));
-	sphere2->pos = ft_fill(0, 0, -25);
-	sphere2->r = 10;
+	sphere2->pos = ft_fill(-1.0, 0, -12);
+	sphere2->r = 2;
 	sphere2->color = ft_fill(0.486, 0.27, 0.65);
 	ft_lstadd_front(&listobj, ft_lstnew(sphere2));
 	sphere3 = malloc(sizeof(t_sphere));
-	sphere3->pos = ft_fill(0, 0, -35);
-	sphere3->r = 4;
+	sphere3->pos = ft_fill(1.5, -0.5, -18);
+	sphere3->r = 3;
 	sphere3->color = ft_fill(0.27, 0.08, 0.431);
 	ft_lstadd_front(&listobj, ft_lstnew(sphere3));
+	t_light *light;
+	light = malloc(sizeof(t_light));
+	light->pos = ft_fill(-20, 20, 20);
+	light->intensity = 1.5;
+	ft_lstadd_front(&listlight, ft_lstnew(light));
 	void *mlx = mlx_init();
 	void *mlx_window = mlx_new_window(mlx, width, height, "Image");
-	render(listobj, width, height, mlx, mlx_window);
+	render(listobj, listlight, width, height, mlx, mlx_window);
 	mlx_loop(mlx);
 }

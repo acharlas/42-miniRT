@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/22 12:17:54 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/22 17:56:42 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,10 @@ typedef  struct s_listobj
 	struct s_listobj	*next;
 }				t_listobj;
 
+typedef struct s_light
+{
+	vect3f pos;
+	float intensity;
+}				t_light;
 
 #endif
