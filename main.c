@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/22 15:29:57 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/22 15:45:03 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,16 +132,15 @@ t_listobj	*ft_lstnew(void *content)
 	return (list);
 }
 
-t_listobj *ft_lstadd_front(t_listobj *alst, t_listobj *new)
+void 	ft_lstadd_front(t_listobj **alst, t_listobj *new)
 {
 	if (!alst)
-		return (alst);
+		return ;
 	if (new)
 	{
-		new->next = alst;
-		alst = new;
+		new->next = *alst;
+		*alst = new;
 	}
-	return (alst);
 }
 
 int main(void)
@@ -157,12 +156,12 @@ int main(void)
 	sphere->r = 2;
 	sphere->color = ft_fill(1, 0, 0);
 	
-	listobj = ft_lstadd_front(listobj, ft_lstnew(sphere));
+	ft_lstadd_front(&listobj, ft_lstnew(sphere));
 	sphere2 = malloc(sizeof(t_sphere));
 	sphere2->pos = ft_fill(20, 20, -56);
 	sphere2->r = 2;
 	sphere2->color = ft_fill(0.949, 0.541, 0.835);
-	listobj = ft_lstadd_front(listobj, ft_lstnew(sphere2));
+	ft_lstadd_front(&listobj, ft_lstnew(sphere2));
 	void *mlx = mlx_init();
 	void *mlx_window = mlx_new_window(mlx, width, height, "Image");
 	render(listobj, width, height, mlx, mlx_window);
