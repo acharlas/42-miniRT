@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/22 17:56:42 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/23 11:23:55 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,10 @@
 
 # include <math.h>
 # include <mlx.h>
+# include <math.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <float.h>
 
 typedef	struct s_struct
 {
@@ -49,4 +53,15 @@ typedef struct s_light
 	float intensity;
 }				t_light;
 
+vect3f		c_vect3f(float a, float b, float c);
+vect3f		normalize(vect3f this);
+vect3f		v_minus(vect3f a, vect3f b);
+vect3f		v_mult(vect3f a, float b);
+vect3f		v_plus(vect3f a, vect3f b);
+float		v_dot(vect3f a, vect3f b);
+float		maxf(float a, float b);
+t_listobj	*ft_lstnew(void *content);
+void		ft_lstadd_front(t_listobj **alst, t_listobj *new);
+int			ft_lstsize(t_listobj *lst);
+int			c_color(vect3f a);
 #endif
