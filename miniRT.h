@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/23 11:52:06 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/23 18:52:29 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,12 @@ vect3f		normalize(vect3f this);
 vect3f		v_minus(vect3f a, vect3f b);
 vect3f		v_mult(vect3f a, float b);
 vect3f		v_plus(vect3f a, vect3f b);
+vect3f		bg_color(float a, float b, float c);
+vect3f		verif_color(vect3f color);
 vect2f		c_vect2f(float a, float b);
 float		v_dot(vect3f a, vect3f b);
 float		maxf(float a, float b);
+float		norm(vect3f a);
 t_listobj	*ft_lstnew(void *content);
 void		ft_lstadd_front(t_listobj **alst, t_listobj *new);
 int			ft_lstsize(t_listobj *lst);

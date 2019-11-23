@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/23 11:40:45 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/23 18:20:07 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,14 @@ vect2f	c_vect2f(float a, float b)
 	
 	out.a = a;
 	out.b = b;
+	return (out);
+}
+
+float	norm(vect3f a)
+{
+	float out;
+
+	out = sqrtf(a.x * a.x + a.y * a.y + a.z * a.z);
 	return (out);
 }
 
