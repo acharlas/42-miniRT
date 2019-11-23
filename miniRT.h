@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/23 11:23:55 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/23 11:52:06 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,18 @@
 # include <stdlib.h>
 # include <float.h>
 
-typedef	struct s_struct
+typedef	struct s_vect3f
 {
 	float x;
 	float y;
 	float z;
 }				vect3f;
+
+typedef	struct s_vect2f
+{
+	float a;
+	float b;
+}				vect2f;
 
 typedef struct s_sphere
 {
@@ -58,6 +64,7 @@ vect3f		normalize(vect3f this);
 vect3f		v_minus(vect3f a, vect3f b);
 vect3f		v_mult(vect3f a, float b);
 vect3f		v_plus(vect3f a, vect3f b);
+vect2f		c_vect2f(float a, float b);
 float		v_dot(vect3f a, vect3f b);
 float		maxf(float a, float b);
 t_listobj	*ft_lstnew(void *content);

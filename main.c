@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/23 11:23:36 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/23 13:01:23 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,13 @@ int		ray_intersect(const vect3f orig, const vect3f dir, float *t0, t_listobj *li
 	if (t0 < 0)
 		return (0);
 	return (1);
+}
+
+vect3f reflect(vect3f *I, vect3f *N)
+{
+	vect3f out;
+	out = v_mult(v_minus(*I, v_mult(*N, 2.0)), v_dot(*I, *N));
+    return (out);
 }
 
 int		scene_intersect(vect3f orig, vect3f dir, t_listobj *listobj, vect3f *hit, vect3f *n, vect3f *color)
@@ -65,17 +72,18 @@ vect3f	cast_ray(vect3f orig, vect3f dir, t_listobj *listobj, t_listobj *listligh
 	vect3f	light_dir;
 	
 	if (!scene_intersect(orig, dir, listobj, &point, &n, &color))
-		return (c_vect3f(0.57, 0, 0.25));
+		return (c_vect3f(0.71, 1.0, 1.0)); //color background
 	diffuse_light_intensity = 0;
 	specular_light_intensity = 0;
 	while (listlight)
 	{
 		light_dir = normalize(v_minus(((t_light *)(listlight->data))->pos, point));
 		diffuse_light_intensity += ((t_light *)(listlight->data))->intensity * maxf(0, v_dot(light_dir, n));
+		specular_light_intensity += powf(maxf(0, v_dot(reflect(&light_dir, &n), dir)), 50.) * ((t_light *)(listlight->data))->intensity; // 50. = specular_light_exposant
 		listlight = listlight->next;
 	}
-	color = v_mult(color, diffuse_light_intensity);
-	return (color);
+	color = v_plus(v_mult(v_mult(color, diffuse_light_intensity), 0.6), v_mult(c_vect3f(1, 1, 1), specular_light_intensity * 0.3)); // 0.6 = albedo[0] / 0.3 = albedo[1]
+	return (color); // color sphere
 }
 
 void	render(t_listobj *listobj, t_listobj *listlight, const int width, const int height, void *mlx, void *mlx_window)
@@ -101,6 +109,10 @@ void	render(t_listobj *listobj, t_listobj *listlight, const int width, const int
     }
 	for(size_t i = 0; i < width; i++)
 	{
+		vect3f c = *framebuffer[i];
+			float max = maxf(c.x, maxf(c.y, c.z));
+			if (max > 1)
+				c = v_mult(c, 1.0/max);
 		for(size_t j = 0; j < height; j++)
 		{
 			color = c_color(framebuffer[i][j]); 
@@ -123,22 +135,22 @@ int		main(void)
 	sphere = malloc(sizeof(t_sphere));
 	sphere->pos = c_vect3f(-6, 0, -16);
 	sphere->r = 4;
-	sphere->color = c_vect3f(0.87, 0.70, 1);
+	sphere->color = c_vect3f(1, 0.34, 0.23);
 	
 	ft_lstadd_front(&listobj, ft_lstnew(sphere));
 	sphere2 = malloc(sizeof(t_sphere));
 	sphere2->pos = c_vect3f(-1.0, 0, -12);
 	sphere2->r = 4;
-	sphere2->color = c_vect3f(0.486, 0.27, 0.65);
+	sphere2->color = c_vect3f(1, 0.76, 0.35);
 	ft_lstadd_front(&listobj, ft_lstnew(sphere2));
 	sphere3 = malloc(sizeof(t_sphere));
-	sphere3->pos = c_vect3f(1.5, -0.5, -18);
+	sphere3->pos = c_vect3f(5, 5, -18);
 	sphere3->r = 6;
-	sphere3->color = c_vect3f(0.27, 0.08, 0.431);
+	sphere3->color = c_vect3f(1, 1, 0.52);
 	ft_lstadd_front(&listobj, ft_lstnew(sphere3));
 	t_light *light;
 	light = malloc(sizeof(t_light));
-	light->pos = c_vect3f(20, 20, 20);
+	light->pos = c_vect3f(20, 20, 50);
 	light->intensity = 1.0;
 	ft_lstadd_front(&listlight, ft_lstnew(light));
 	void *mlx = mlx_init();
