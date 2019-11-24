@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/24 12:58:21 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/24 16:47:41 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,20 @@
 # include <stdlib.h>
 # include <float.h>
 
+
 typedef	struct s_vect3f
 {
 	float x;
 	float y;
 	float z;
 }				vect3f;
+
+typedef struct s_material
+{
+	vect3f	albedo;
+	vect3f	color;
+	float	specular_expo;
+}				t_material;
 
 typedef	struct s_vect2f
 {
@@ -35,10 +43,9 @@ typedef	struct s_vect2f
 
 typedef struct s_sphere
 {
-	vect3f	pos;
-	vect3f	color;
-	float	r;
-	vect3f	albedo;
+	vect3f		pos;
+	t_material	material;
+	float		r;
 }				t_sphere;
 
 typedef struct s_camera

@@ -6,13 +6,13 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/24 13:54:52 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/24 17:04:39 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniRT.h"
 
-int		ray_intersect(const vect3f *orig, const vect3f *dir, float *t0, t_listobj *listobj)
+int		ray_intersect(const vect3f *orig, const vect3f *dir, float *t0, const t_listobj *listobj)
 {
 	vect3f	l;
 	float	tca;
@@ -35,14 +35,14 @@ int		ray_intersect(const vect3f *orig, const vect3f *dir, float *t0, t_listobj *
 	return (1);
 }
 
-vect3f reflect(vect3f *I, vect3f *N)
+vect3f reflect(const vect3f *I, const vect3f *N)
 {
 	vect3f out;
 	out = v_minus(*I, v_mult(*N, (2.f * v_dot(*I, *N))));
     return (out);
 }
 
-int		scene_intersect(const vect3f *orig, vect3f *dir, t_listobj *listobj, vect3f *hit, vect3f *n, vect3f *color)
+int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_listobj *listobj, vect3f *hit, vect3f *n, t_material *material)
 {
 	float	spheres_dist = FLT_MAX;
 	float	dist_i;
@@ -51,53 +51,56 @@ int		scene_intersect(const vect3f *orig, vect3f *dir, t_listobj *listobj, vect3f
 	{
 		if (ray_intersect(orig, dir, &dist_i, listobj) && dist_i < spheres_dist)
 		{
-			*color = ((t_sphere *)(listobj->data))->color;
 			spheres_dist = dist_i;
 			*hit = v_plus(*orig, v_mult(*dir, dist_i));
 			*n = normalize(v_minus(*hit, ((t_sphere *)(listobj->data))->pos));
+			*material = ((t_sphere *)(listobj->data))->material;
 		}
 		listobj = listobj->next;
 	}
 	return (spheres_dist < 1000);
 }
 
-vect3f	cast_ray(vect3f orig, vect3f dir, t_listobj *listobj, t_listobj *listlight, size_t depth)
+vect3f	cast_ray(const vect3f orig, const vect3f dir, const t_listobj *listobj, const t_listobj *listlight, size_t depth)
 {
 	float	diffuse_light_intensity;
 	float	specular_light_intensity;
-	vect3f	color;
+	vect3f color;
+	t_material	material;
 	vect3f	point;
 	vect3f	n;
 	vect3f	light_dir;
 	vect3f reflect_dir;
 	vect3f reflect_orig;
+	vect3f reflect_color;
 	
-	if (depth > 4 || !scene_intersect(&orig, &dir, listobj, &point, &n, &color))
+	if (depth > 4 || !scene_intersect(&orig, &dir, listobj, &point, &n, &material))
 		return (bg_color(164,202,255)); //color background
 	
-	diffuse_light_intensity = 0;
-	specular_light_intensity = 0;
 	reflect_dir = normalize(reflect(&dir, &n));
 	reflect_orig = v_dot(reflect_dir, n) < 0 ? v_minus(point, v_mult(n, 0.001)) : v_plus(point, v_mult(n, 0.001));
-	vect3f reflect_color = cast_ray(reflect_orig, reflect_dir, listobj, listlight, (depth + 1));
+	reflect_color = cast_ray(reflect_orig, reflect_dir, listobj, listlight, (depth + 1));
+	diffuse_light_intensity = 0;
+	specular_light_intensity = 0;
 	while (listlight)
 	{
 		light_dir = normalize(v_minus(((t_light *)(listlight->data))->pos, point));
 		float light_distance = norm(v_minus(((t_light *)(listlight->data))->pos, point));
+
 		vect3f shadow_origi = v_dot(light_dir, n) < 0 ? v_minus(point, v_mult(n, 0.001)) : v_plus(point, v_mult(n, 0.001));
 		vect3f shadow_pt = c_vect3f(0, 0, 0);
 		vect3f shadow_N = c_vect3f(0, 0, 0);
-		vect3f tmpmaterial;
+		t_material tmpmaterial;
 		if (scene_intersect(&shadow_origi, &light_dir, listobj, &shadow_pt, &shadow_N, &tmpmaterial) && (norm(v_minus(shadow_pt, shadow_origi))) < light_distance)
 		{
 			listlight = listlight->next;
 		 	continue;
 		}
 		diffuse_light_intensity += ((t_light *)(listlight->data))->intensity * maxf(0.f, v_dot(light_dir, n));
-		specular_light_intensity += powf(maxf(0.f, v_dot(reflect(&light_dir, &n), dir)), 1425) * ((t_light *)(listlight->data))->intensity; // 50. = specular_light_exposant
+		specular_light_intensity += powf(maxf(0.f, v_dot(reflect(&light_dir, &n), dir)), ((t_sphere *)(listobj->data))->material.specular_expo) * ((t_light *)(listlight->data))->intensity; // 50. = specular_light_exposant
 		listlight = listlight->next;
 	}
-	color = v_plus(v_plus(v_mult(color, (diffuse_light_intensity * ((t_sphere *)(listobj->data))->albedo.x)), v_mult(c_vect3f(1, 1, 1),(specular_light_intensity * ((t_sphere *)(listobj->data))->albedo.y))),v_mult(reflect_color, ((t_sphere *)(listobj->data))->albedo.z)); // 0.6 = albedo[0] / 0.3 = albedo[1]
+	color = v_plus(v_plus(v_mult(((t_sphere *)(listobj->data))->material.color, (diffuse_light_intensity * ((t_sphere *)(listobj->data))->material.albedo.x)), v_mult(c_vect3f(1, 1, 1),(specular_light_intensity * ((t_sphere *)(listobj->data))->material.albedo.y))),v_mult(reflect_color, ((t_sphere *)(listobj->data))->material.albedo.z)); // 0.6 = albedo[0] / 0.3 = albedo[1]
 	color = verif_color(color);
 	return (color); // color sphere
 }
@@ -152,29 +155,33 @@ int		main(void)
 	sphere = malloc(sizeof(t_sphere));
 	sphere->pos = c_vect3f(-3, 0, -16);
 	sphere->r = 2;
-	sphere->color = c_vect3f(0.4, 0.4, 0.3); // bg_color(150, 11, 64);
-	sphere->albedo = c_vect3f(0.6, 0.3, 0.1); // albedo[0] : diffuse light | albedo[1] : specular light | albedo[2] : reflect light
+	sphere->material.color = c_vect3f(0.4, 0.4, 0.3); // bg_color(150, 11, 64);
+	sphere->material.albedo = c_vect3f(0.6, 0.3, 0.1); // albedo[0] : diffuse light | albedo[1] : specular light | albedo[2] : reflect light
+	sphere->material.specular_expo = 50.;
 	ft_lstadd_front(&listobj, ft_lstnew(sphere));
 
 	sphere2 = malloc(sizeof(t_sphere));
 	sphere2->pos = c_vect3f(-1, -1.5, -12);
 	sphere2->r = 2;
-	sphere2->color = c_vect3f(1, 1, 1); // bg_color(255, 131, 220);
-	sphere2->albedo = c_vect3f(0, 10.0, 0.8); // albedo[0] : diffuse light | albedo[1] : specular light | albedo[2] : reflect light
+	sphere2->material.color = c_vect3f(1, 1, 1); // bg_color(255, 131, 220);
+	sphere2->material.albedo = c_vect3f(0, 10.0, 0.8); // albedo[0] : diffuse light | albedo[1] : specular light | albedo[2] : reflect light
+	sphere->material.specular_expo = 1425.;
 	ft_lstadd_front(&listobj, ft_lstnew(sphere2));
 
 	sphere3 = malloc(sizeof(t_sphere));
 	sphere3->pos = c_vect3f(1.5, -0.5, -18);
 	sphere3->r = 3;
-	sphere3->color = c_vect3f(0.3, 0.1, 0.1); // bg_color(210, 51, 108);
-	sphere3->albedo = c_vect3f(0.9, 0.1, 0.0); // albedo[0] : diffuse light | albedo[1] : specular light | albedo[2] : reflect light
+	sphere3->material.color = c_vect3f(0.3, 0.1, 0.1); // bg_color(210, 51, 108);
+	sphere3->material.albedo = c_vect3f(0.9, 0.1, 0.0); // albedo[0] : diffuse light | albedo[1] : specular light | albedo[2] : reflect light
+	sphere->material.specular_expo = 10.;
 	ft_lstadd_front(&listobj, ft_lstnew(sphere3));
 
 	sphere4 = malloc(sizeof(t_sphere));
 	sphere4->pos = c_vect3f(7, 5, -18);
 	sphere4->r = 4;
-	sphere4->color = c_vect3f(1, 1, 1); // bg_color(210, 51, 108);
-	sphere4->albedo = c_vect3f(0.9, 0.5, 0.5); // albedo[0] : diffuse light | albedo[1] : specular light | albedo[2] : reflect light
+	sphere4->material.color = c_vect3f(1, 1, 1); // bg_color(210, 51, 108);
+	sphere4->material.albedo = c_vect3f(0, 10.0, 0.8); // albedo[0] : diffuse light | albedo[1] : specular light | albedo[2] : reflect light
+	sphere->material.specular_expo = 1425.;
 	ft_lstadd_front(&listobj, ft_lstnew(sphere4));
 
 	t_light *light;
