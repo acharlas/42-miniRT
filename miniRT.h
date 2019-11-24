@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/23 18:52:29 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/24 12:58:21 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,9 @@ typedef	struct s_vect2f
 typedef struct s_sphere
 {
 	vect3f	pos;
-	float	r;
 	vect3f	color;
+	float	r;
+	vect3f	albedo;
 }				t_sphere;
 
 typedef struct s_camera
