@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 11:19:13 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/23 18:52:31 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/25 13:57:29 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,21 @@ float maxf(float a, float b)
 		return (a);
 	return(b);
 }
+
+float ft_fabs(float a)
+{
+	if(a < 0)
+		return(-a);
+	return(a);
+}
+
+float minf(float a, float b)
+{
+	if (a >= b)
+		return (b);
+	return(a);
+}
+
 
 int	c_color(vect3f a)
 {

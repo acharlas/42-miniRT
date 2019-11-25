@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/24 16:47:41 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/25 13:56:29 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,20 @@ typedef	struct s_vect3f
 	float z;
 }				vect3f;
 
+typedef	struct s_vect4f
+{
+	float i;
+	float j;
+	float k;
+	float l;
+}				vect4f;
+
 typedef struct s_material
 {
-	vect3f	albedo;
+	vect4f	albedo;
 	vect3f	color;
 	float	specular_expo;
+	float	refractive_index;
 }				t_material;
 
 typedef	struct s_vect2f
@@ -74,10 +83,13 @@ vect3f		v_mult(vect3f a, float b);
 vect3f		v_plus(vect3f a, vect3f b);
 vect3f		bg_color(float a, float b, float c);
 vect3f		verif_color(vect3f color);
+vect4f		c_vect4f(float a, float b, float c, float d);
 vect2f		c_vect2f(float a, float b);
 float		v_dot(vect3f a, vect3f b);
 float		maxf(float a, float b);
+float		minf(float a, float b);
 float		norm(vect3f a);
+float 		ft_fabs(float a);
 t_listobj	*ft_lstnew(void *content);
 void		ft_lstadd_front(t_listobj **alst, t_listobj *new);
 int			ft_lstsize(t_listobj *lst);

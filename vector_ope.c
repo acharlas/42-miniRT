@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/23 18:20:07 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/25 12:05:39 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,17 @@ vect3f	c_vect3f(float a, float b, float c)
 	out.x = a;
 	out.y = b;
 	out.z = c;
+	return (out);
+}
+
+vect4f	c_vect4f(float a, float b, float c, float d)
+{
+	vect4f	out;
+	
+	out.i = a;
+	out.j = b;
+	out.k = c;
+	out.l = d;
 	return (out);
 }
 
