@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/25 17:29:57 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/25 18:35:41 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_listobj *lis
 		}
 		listobj = listobj->next;
 	}
-	
 	if (ft_fabs(dir->y) > 0.001)
 	{
 		float d = -(orig->y + 4)/ dir->y; //equation y = -4;
@@ -82,6 +81,12 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_listobj *lis
 			*hit = pt;
 			*n = c_vect3f(0,1,0);
 			material->color = ((int)(.5*hit->x+1000) + (int)(.5*hit->z)) & 1 ? c_vect3f(0.3,0.3,0.3) : c_vect3f(0.3,0.2, 0.1);
+			material->albedo.i = 0.8;
+			material->albedo.j = 0.25;
+			material->albedo.k = 0.0;
+			material->albedo.l = 0.0;
+			material->refractive_index = 1;
+			material->specular_expo = 50;
 		}
 	}
 	return (minf(spheres_dist, checkboard_dist) < 1000);
