@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/25 18:35:41 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/25 19:08:54 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,9 +236,13 @@ int		main(void)
 	light3 = malloc(sizeof(t_light));
 	light3->pos = c_vect3f(30, 20, 30);
 	light3->intensity = 1.7;
-	ft_lstadd_front(&listlight, ft_lstnew(light3)); 
+	ft_lstadd_front(&listlight, ft_lstnew(light3));
+	int a = 1920;
+	int b = 1050;
 	void *mlx = mlx_init();
 	void *mlx_window = mlx_new_window(mlx, width, height, "Image");
+	void *mlx_img = mlx_xpm_file_to_image(mlx, "land.xpm", &a, &b);
+	mlx_put_image_to_window(mlx, mlx_window, mlx_img, 0, 0);
 	render(listobj, listlight, width, height, mlx, mlx_window);
 	mlx_loop(mlx);
 }
