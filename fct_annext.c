@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 11:19:13 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/25 13:57:29 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/26 17:01:48 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,5 +56,11 @@ vect3f	verif_color(vect3f color)
 		color.y = 1;
 	if (color.z > 1)
 		color.z = 1;
+	if (color.x < 0)
+		color.x = 0.001;
+	if (color.y < 0)
+		color.y = 0.001;
+	if (color.z < 0)
+		color.z = 0.001;
 	return (color);
 }

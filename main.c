@@ -6,13 +6,13 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/25 19:08:54 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/26 17:42:21 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniRT.h"
 
-int		ray_intersect(const vect3f *orig, const vect3f *dir, float *t0, const t_listobj *listobj)
+bool		ray_intersect(const vect3f *orig, const vect3f *dir, float *t0, const t_list *listobj)
 {
 	vect3f	l;
 	float	tca;
@@ -55,7 +55,7 @@ vect3f	refract(const vect3f *I, const vect3f *n, const float eta_t, const float 
 	return k < 0 ? c_vect3f(1,0,0) : v_plus(v_mult(*I,eta), v_mult(*n,eta*cosi -sqrtf(k)));
 }
 
-int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_listobj *listobj, vect3f *hit, vect3f *n, t_material *material)
+int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listobj, vect3f *hit, vect3f *n, t_material *material)
 {
 	float	spheres_dist = FLT_MAX;
 	float	dist_i;
@@ -92,7 +92,7 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_listobj *lis
 	return (minf(spheres_dist, checkboard_dist) < 1000);
 }
 
-vect3f	cast_ray(const vect3f orig, const vect3f dir, const t_listobj *listobj, const t_listobj *listlight, size_t depth)
+vect3f	cast_ray(const vect3f orig, const vect3f dir, const t_list *listobj, const t_list *listlight, size_t depth)
 {
 	float	diffuse_light_intensity;
 	float	specular_light_intensity;
@@ -107,9 +107,10 @@ vect3f	cast_ray(const vect3f orig, const vect3f dir, const t_listobj *listobj, c
 	vect3f refract_dir;
 	vect3f refract_orig;
 	vect3f refract_color;
+	vect3f add_color = c_vect3f(0, 0, 0);
 	
 	if (depth > 4 || !scene_intersect(&orig, &dir, listobj, &point, &n, &material))
-		return (bg_color(164,202,255)); //color background
+		return (bg_color(126,192,238)); //color background
 	
 	refract_dir = normalize(refract(&dir, &n, material.refractive_index, 1.0));
 	refract_orig = v_dot(refract_dir, n) < 0 ? v_minus(point, v_mult(n, 0.001)) : v_plus(point, v_mult(n, 0.001));
@@ -128,6 +129,8 @@ vect3f	cast_ray(const vect3f orig, const vect3f dir, const t_listobj *listobj, c
 		vect3f shadow_pt = c_vect3f(0, 0, 0);
 		vect3f shadow_N = c_vect3f(0, 0, 0);
 		t_material tmpmaterial;
+		add_color = v_plus(add_color, v_div(((t_light *)(listlight->data))->color, 3));
+		add_color = verif_color(add_color);
 		if (scene_intersect(&shadow_origi, &light_dir, listobj, &shadow_pt, &shadow_N, &tmpmaterial) && (norm(v_minus(shadow_pt, shadow_origi))) < light_distance)
 		{
 			listlight = listlight->next;
@@ -137,112 +140,61 @@ vect3f	cast_ray(const vect3f orig, const vect3f dir, const t_listobj *listobj, c
 		specular_light_intensity += powf(maxf(0.f, v_dot(reflect(&light_dir, &n), dir)), material.specular_expo) * ((t_light *)(listlight->data))->intensity; // 50. = specular_light_exposant
 		listlight = listlight->next;
 	}
-	color = v_plus(v_plus(v_plus(v_mult(material.color, (diffuse_light_intensity * material.albedo.i)), v_mult(c_vect3f(1, 1, 1),(specular_light_intensity * material.albedo.j))),v_mult(reflect_color,material.albedo.k)),v_mult(refract_color, material.albedo.l));
+	color = v_multv(v_plus(v_plus(v_plus(v_mult(material.color, (diffuse_light_intensity * material.albedo.i)), v_mult(c_vect3f(1, 1, 1),(specular_light_intensity * material.albedo.j))),v_mult(reflect_color,material.albedo.k)),v_mult(refract_color, material.albedo.l)), add_color);
 	color = verif_color(color);
 	return (color); // color sphere
 }
 
-void	render(t_listobj *listobj, t_listobj *listlight, const int width, const int height, void *mlx, void *mlx_window)
+void	*render(t_list *listobj, t_list *listlight, const int width, const int height)
 {
-	const float		fov = M_PI / 3.; // int donc = 1 mais bientot float
-	const vect3f	orig = c_vect3f(0, 0, 0);
-	float			vue[2];
-	vect3f			dir;
 	vect3f			*framebuffer[width];
-	int				color;
-	float			invHeight = 1 / (float)height;
-	float			invWidth = 1 / (float)width;
-	float			fovtan = tan(fov / 2.);
-		
-	for (size_t i = 0; i < width; i++)
+	size_t			i[2];
+	void			*mlx[2];
+	const float		fov = M_PI / 3.; // int donc = 1 mais bientot float
+	float			vue[2];
+
+	mlx[0] = mlx_init();
+	mlx[1] = mlx_new_window(mlx[0], width, height, "Image");
+	i[0] = 0;
+	while (i[0] < width)
 	{
-		framebuffer[i] = malloc(sizeof(vect3f) * height);
-		for (size_t j = 0; j < height; j++)
+		framebuffer[i[0]] = malloc(sizeof(vect3f) * height);
+		i[1] = 0;
+		while (i[1] < height)
 		{
-			vue[0] =  (2 * (i + 0.5) * invWidth  - 1) * fovtan * width * invHeight;
-			vue[1] = -(2 * (j + 0.5) * invHeight - 1) * fovtan;
-			dir = normalize(c_vect3f(vue[0], vue[1], -1));
-			mlx_pixel_put(mlx, mlx_window, i, j,c_color(framebuffer[i][j] = cast_ray(orig, dir, listobj, listlight, 0)));
-        }
-		free(framebuffer[i]);
-    }
+			vue[0] = (2 * (i[0] + 0.5) / width - 1) * tan(fov / 2) * width / height;
+			vue[1] = -(2 * (i[1] + 0.5) / height - 1) * tan(fov / 2);
+			mlx_pixel_put(mlx[0], mlx[1], i[0], i[1], c_color(framebuffer[i[0]][i[1]] = cast_ray(c_vect3f(0, 0, 0), normalize(c_vect3f(vue[0], vue[1], -1)), listobj, listlight, 0)));
+			i[1]++;
+		}
+		free(framebuffer[i[0]]);
+		i[0]++;
+	}
+	return (mlx[0]);
 }
 
 int		main(void)
 {
 	const int width = 1024;
 	const int height = 768;
-	t_listobj *listobj = NULL;
-	t_listobj *listlight = NULL;
+	void *mlx;
+	t_list *spheres = NULL;
+	t_list *listlight = NULL;
 	
-	t_sphere *sphere;
-	t_sphere *sphere2;
-	t_sphere *sphere3;
-	t_sphere *sphere4;
+	t_material ivoire = c_material(c_vect3f(0.4, 0.4, 0.3), c_vect4f(0.6, 0.3, 0.1, 0), 1.0, 50.);
+	t_material redrubber = c_material(c_vect3f(0.3, 0.1, 0.1), c_vect4f(0.9, 0.1, 0.0, 0), 1.0, 10.);
+	t_material glass = c_material(c_vect3f(0.6, 0.7, 0.8), c_vect4f(0, 0.5, 0.1, 0.8), 1.5, 125.);
+	t_material mirroir = c_material(c_vect3f(1, 1, 1), c_vect4f(0, 10.0, 0.8, 0), 1.0, 1425.);
 
-	//ivoire
-	sphere = malloc(sizeof(t_sphere));
-	sphere->pos = c_vect3f(-3, 0, -16);
-	sphere->r = 2;
-	sphere->material.refractive_index = 1.0;
-	sphere->material.color = c_vect3f(0.4, 0.4, 0.3); // bg_color(150, 11, 64);
-	sphere->material.albedo = c_vect4f(0.6, 0.3, 0.1, 0); // albedo[0] : diffuse light | albedo[1] : specular light | albedo[2] : reflect light
-	sphere->material.specular_expo = 50.;
-	ft_lstadd_front(&listobj, ft_lstnew(sphere));
+	c_sphere(&spheres, c_vect3f(-3, 0, -16), ivoire, 2);
+	c_sphere(&spheres, c_vect3f(-1, -1.5, -12), glass, 2);
+	c_sphere(&spheres, c_vect3f(1.5, -0.5, -18), redrubber, 3);
+	c_sphere(&spheres, c_vect3f(7, 5, -18), mirroir, 4);
 
-	// glass
-	sphere2 = malloc(sizeof(t_sphere));
-	sphere2->pos = c_vect3f(-1, -1.5, -12);
-	sphere2->r = 2;
-	sphere2->material.refractive_index = 1.5;
-	sphere2->material.color = c_vect3f(0.6, 0.7, 0.8); // bg_color(255, 131, 220);
-	sphere2->material.albedo = c_vect4f(0, 0.5, 0.1, 0.8); // albedo[0] : diffuse light | albedo[1] : specular light | albedo[2] : reflect light
-	sphere2->material.specular_expo = 125.;
-	ft_lstadd_front(&listobj, ft_lstnew(sphere2));
+	c_light(&listlight, c_vect3f(-20, 20, 20), c_vect3f(1, 0, 0), 1.5);
+	c_light(&listlight, c_vect3f(30, 50, -25), c_vect3f(1, 1 ,1), 1.8);
+	c_light(&listlight, c_vect3f(30, 20, 30), c_vect3f(1, 1, 1), 1.7);
 
-	// red_rubber
-	sphere3 = malloc(sizeof(t_sphere));
-	sphere3->pos = c_vect3f(1.5, -0.5, -18);
-	sphere3->r = 3;
-	sphere3->material.refractive_index = 1.0;
-	sphere3->material.color = c_vect3f(0.3, 0.1, 0.1); // bg_color(210, 51, 108);
-	sphere3->material.albedo = c_vect4f(0.9, 0.1, 0.0, 0); // albedo[0] : diffuse light | albedo[1] : specular light | albedo[2] : reflect light
-	sphere3->material.specular_expo = 10.;
-	ft_lstadd_front(&listobj, ft_lstnew(sphere3));
-
-	//miroir
-	sphere4 = malloc(sizeof(t_sphere));
-	sphere4->pos = c_vect3f(7, 5, -18);
-	sphere4->r = 4;
-	sphere4->material.refractive_index = 1.0;
-	sphere4->material.color = c_vect3f(1, 1, 1); // bg_color(210, 51, 108);
-	sphere4->material.albedo = c_vect4f(0, 10.0, 0.8, 0); // albedo[0] : diffuse light | albedo[1] : specular light | albedo[2] : reflect light
-	sphere4->material.specular_expo = 1425.;
-	ft_lstadd_front(&listobj, ft_lstnew(sphere4));
-
-	t_light *light;
-	light = malloc(sizeof(t_light));
-	light->pos = c_vect3f(-20, 20, 20);
-	light->intensity = 1.5;
-	ft_lstadd_front(&listlight, ft_lstnew(light));
-
-	t_light *light2;
-	light2 = malloc(sizeof(t_light));
-	light2->pos = c_vect3f(30, 50, -25);
-	light2->intensity = 1.8;
-	ft_lstadd_front(&listlight, ft_lstnew(light2)); 
-
-	t_light *light3;
-	light3 = malloc(sizeof(t_light));
-	light3->pos = c_vect3f(30, 20, 30);
-	light3->intensity = 1.7;
-	ft_lstadd_front(&listlight, ft_lstnew(light3));
-	int a = 1920;
-	int b = 1050;
-	void *mlx = mlx_init();
-	void *mlx_window = mlx_new_window(mlx, width, height, "Image");
-	void *mlx_img = mlx_xpm_file_to_image(mlx, "land.xpm", &a, &b);
-	mlx_put_image_to_window(mlx, mlx_window, mlx_img, 0, 0);
-	render(listobj, listlight, width, height, mlx, mlx_window);
+	mlx = render(spheres, listlight, width, height);
 	mlx_loop(mlx);
 }
