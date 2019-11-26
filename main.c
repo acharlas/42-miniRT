@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/26 18:34:21 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/26 19:13:22 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ vect3f	cast_ray(const vect3f orig, const vect3f dir, const t_list *listobj, cons
 		vect3f shadow_pt = c_vect3f(0, 0, 0);
 		vect3f shadow_N = c_vect3f(0, 0, 0);
 		t_material tmpmaterial;
-		add_color = v_plus(add_color, v_div(((t_light *)(listlight->data))->color, 3));
+		add_color = v_plus(add_color, v_div(((t_light *)(listlight->data))->color, ft_lstsize(listlight)));
 		add_color = verif_color(add_color);
 		if (scene_intersect(&shadow_origi, &light_dir, listobj, &shadow_pt, &shadow_N, &tmpmaterial) && (norm(v_minus(shadow_pt, shadow_origi))) < light_distance)
 		{
@@ -140,7 +140,7 @@ vect3f	cast_ray(const vect3f orig, const vect3f dir, const t_list *listobj, cons
 		specular_light_intensity += powf(maxf(0.f, v_dot(reflect(&light_dir, &n), dir)), material.specular_expo) * ((t_light *)(listlight->data))->intensity; // 50. = specular_light_exposant
 		listlight = listlight->next;
 	}
-	color = v_multv(v_plus(v_plus(v_plus(v_mult(material.color, (diffuse_light_intensity * material.albedo.i)), v_mult(c_vect3f(1, 1, 1),(specular_light_intensity * material.albedo.j))),v_mult(reflect_color,material.albedo.k)),v_mult(refract_color, material.albedo.l)), add_color);
+	color = v_multv(v_plus(v_plus(v_plus(v_mult(material.color, (diffuse_light_intensity * material.albedo.i)), v_mult(add_color,(specular_light_intensity * material.albedo.j))),v_mult(reflect_color,material.albedo.k)),v_mult(refract_color, material.albedo.l)), add_color);
 	color = verif_color(color);
 	return (color); // color sphere
 }
@@ -192,7 +192,7 @@ int		main(void)
 	c_sphere(&spheres, c_vect3f(7, 5, -18), mirroir, 4);
 
 	c_light(&listlight, c_vect3f(-20, 20, 20), c_vect3f(1, 1, 1), 1.5);
-	c_light(&listlight, c_vect3f(30, 50, -25), c_vect3f(1, 1 ,1), 1.8);
+	c_light(&listlight, c_vect3f(30, 50, -25), c_vect3f(1, 1, 1), 1.8);
 	c_light(&listlight, c_vect3f(30, 20, 30), c_vect3f(1, 1, 1), 1.7);
 
 	mlx = render(spheres, listlight, width, height);

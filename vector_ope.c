@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/26 17:33:50 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/26 18:57:44 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,4 +97,9 @@ vect3f v_multv(vect3f a, vect3f b)
 vect3f	v_div(vect3f a, float b)
 {
 	return(c_vect3f(a.x / b, a.y / b, a.z / b));
+}
+
+vect3f	v_divv(vect3f a, vect3f b)
+{
+	return(c_vect3f(a.x / b.x, a.y / b.y, a.z / b.z));
 }

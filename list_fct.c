@@ -6,13 +6,13 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:35:00 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/26 15:01:30 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/26 18:59:50 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniRT.h"
 
-int	ft_lstsize(t_list *lst)
+int	ft_lstsize(const t_list *lst)
 {
 	int i;
 

@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/26 17:33:42 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/26 19:00:00 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,11 +96,12 @@ float		norm(vect3f a);
 float 		ft_fabs(float a);
 t_list	*ft_lstnew(void *content);
 void		ft_lstadd_front(t_list **alst, t_list *new);
-int			ft_lstsize(t_list *lst);
+int			ft_lstsize(const t_list *lst);
 int			c_color(vect3f a);
 void	c_light(t_list **alst, vect3f pos, vect3f color, float intensity);
 t_material 	c_material(vect3f color, vect4f albedo, float refrac_ind, float spec_expo);
 void	c_sphere(t_list **alst, vect3f pos, t_material material, float r);
 vect3f v_multv(vect3f a, vect3f b);
 vect3f	v_div(vect3f a, float b);
+vect3f	v_divv(vect3f a, vect3f b);
 #endif
