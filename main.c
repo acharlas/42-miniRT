@@ -6,13 +6,13 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/26 17:42:21 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/26 18:34:21 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniRT.h"
 
-bool		ray_intersect(const vect3f *orig, const vect3f *dir, float *t0, const t_list *listobj)
+bool		ray_intersect(const vect3f *orig, const vect3f *dir, float *t0, const t_sphere sphere)
 {
 	vect3f	l;
 	float	tca;
@@ -20,12 +20,12 @@ bool		ray_intersect(const vect3f *orig, const vect3f *dir, float *t0, const t_li
 	float	thc;
 	float	t1;
 
-	l = v_minus(((t_sphere *)(listobj->data))->pos, *orig);
+	l = v_minus(sphere.pos, *orig);
 	tca = v_dot(l, *dir);
 	d2 = v_dot(l, l) - (tca * tca);
-	if (d2 > powf(((t_sphere *)(listobj->data))->r, 2))
+	if (d2 > powf(sphere.r, 2))
 		return (0);
-	thc = sqrtf(powf(((t_sphere *)(listobj->data))->r, 2) - d2);
+	thc = sqrtf(powf(sphere.r, 2) - d2);
 	*t0 = tca - thc;
 	t1 = tca + thc;
 	if (*t0 < 0)
@@ -62,7 +62,7 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 	float checkboard_dist = FLT_MAX;
 	while (listobj)
 	{
-		if (ray_intersect(orig, dir, &dist_i, listobj) && dist_i < spheres_dist)
+		if (ray_intersect(orig, dir, &dist_i, *((t_sphere *)(listobj->data))) && dist_i < spheres_dist)
 		{
 			spheres_dist = dist_i;
 			*hit = v_plus(*orig, v_mult(*dir, dist_i));
@@ -191,7 +191,7 @@ int		main(void)
 	c_sphere(&spheres, c_vect3f(1.5, -0.5, -18), redrubber, 3);
 	c_sphere(&spheres, c_vect3f(7, 5, -18), mirroir, 4);
 
-	c_light(&listlight, c_vect3f(-20, 20, 20), c_vect3f(1, 0, 0), 1.5);
+	c_light(&listlight, c_vect3f(-20, 20, 20), c_vect3f(1, 1, 1), 1.5);
 	c_light(&listlight, c_vect3f(30, 50, -25), c_vect3f(1, 1 ,1), 1.8);
 	c_light(&listlight, c_vect3f(30, 20, 30), c_vect3f(1, 1, 1), 1.7);
 
