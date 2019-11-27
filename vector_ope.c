@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/26 18:57:44 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/27 20:59:05 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,4 +102,43 @@ vect3f	v_div(vect3f a, float b)
 vect3f	v_divv(vect3f a, vect3f b)
 {
 	return(c_vect3f(a.x / b.x, a.y / b.y, a.z / b.z));
+}
+
+bool	ray_intersect_sphere(const vect3f *orig, const vect3f *dir, float *t0, const t_sphere sphere)
+{
+	vect3f	l;
+	float	tca;
+	float	d2;
+	float	thc;
+	float	t1;
+
+	l = v_minus(sphere.pos, *orig);
+	tca = v_dot(l, *dir);
+	d2 = v_dot(l, l) - (tca * tca);
+	if (d2 > powf(sphere.r, 2))
+		return (0);
+	thc = sqrtf(powf(sphere.r, 2) - d2);
+	*t0 = tca - thc;
+	t1 = tca + thc;
+	if (*t0 < 0)
+		*t0 = t1;
+	if (*t0 < 0)
+		return (0);
+	return (1);
+}
+
+bool		ray_intersect_square(const vect3f *orig, const vect3f *dir, float *t0, const t_square square)
+{
+	if (ft_fabs(dir->y) > 0.001)
+	{
+		float d = -(orig->y - square.pos.y)/ dir->y; 
+		vect3f pt = v_plus(*orig,v_mult(*dir,d));
+		if(d > 0 && ft_fabs(pt.x)<10 && pt.z<-10 && pt.z>-30)
+		{
+			*t0 = d;
+			return(1);
+		}
+		return (0);
+	}
+	return (0);
 }

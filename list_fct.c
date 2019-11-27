@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:35:00 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/26 18:59:50 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/27 20:15:46 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	ft_lstsize(const t_list *lst)
 	return (i);
 }
 
-t_list	*ft_lstnew(void *content)
+t_list	*ft_lstnew(void *content, char c)
 {
 	t_list	*list;
 
@@ -33,6 +33,7 @@ t_list	*ft_lstnew(void *content)
 		return (NULL);
 	list->data = content;
 	list->next = NULL;
+	list->name = c;
 	return (list);
 }
 

@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/26 14:54:43 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/26 16:17:18 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/27 20:10:22 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ void	c_light(t_list **alst, vect3f pos, vect3f color, float intensity)
 	light->pos = pos;
 	light->intensity = intensity;
 	light->color = color;
-	ft_lstadd_front(alst, ft_lstnew(light));
+	ft_lstadd_front(alst, ft_lstnew(light, 'l'));
 }
 
-void	c_sphere(t_list **alst, vect3f pos, t_material material, float r)
+void	c_sphere(t_list **alst, vect3f pos, t_material material, float r, void *f)
 {
 	t_sphere *sphere;
 
@@ -34,7 +34,8 @@ void	c_sphere(t_list **alst, vect3f pos, t_material material, float r)
 	sphere->material.color = material.color; // bg_color(210, 51, 108);
 	sphere->material.albedo = material.albedo; // albedo[0] : diffuse light | albedo[1] : specular light | albedo[2] : reflect light
 	sphere->material.specular_expo = material.specular_expo;
-	ft_lstadd_front(alst, ft_lstnew(sphere));
+	sphere->ray_intersect = f;
+	ft_lstadd_front(alst, ft_lstnew(sphere, 's'));
 }
 
 t_material 	c_material(vect3f color, vect4f albedo, float refrac_ind, float spec_expo)

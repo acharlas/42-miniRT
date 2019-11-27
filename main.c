@@ -6,34 +6,12 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/26 19:13:22 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/27 21:04:47 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniRT.h"
 
-bool		ray_intersect(const vect3f *orig, const vect3f *dir, float *t0, const t_sphere sphere)
-{
-	vect3f	l;
-	float	tca;
-	float	d2;
-	float	thc;
-	float	t1;
-
-	l = v_minus(sphere.pos, *orig);
-	tca = v_dot(l, *dir);
-	d2 = v_dot(l, l) - (tca * tca);
-	if (d2 > powf(sphere.r, 2))
-		return (0);
-	thc = sqrtf(powf(sphere.r, 2) - d2);
-	*t0 = tca - thc;
-	t1 = tca + thc;
-	if (*t0 < 0)
-		*t0 = t1;
-	if (*t0 < 0)
-		return (0);
-	return (1);
-}
 
 vect3f reflect(const vect3f *I, const vect3f *N)
 {
@@ -58,36 +36,35 @@ vect3f	refract(const vect3f *I, const vect3f *n, const float eta_t, const float 
 int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listobj, vect3f *hit, vect3f *n, t_material *material)
 {
 	float	spheres_dist = FLT_MAX;
-	float	dist_i;
 	float checkboard_dist = FLT_MAX;
+	float d;
+	float	dist_i = 0;
+	
 	while (listobj)
 	{
-		if (ray_intersect(orig, dir, &dist_i, *((t_sphere *)(listobj->data))) && dist_i < spheres_dist)
+		if(listobj->name == 's')
 		{
-			spheres_dist = dist_i;
-			*hit = v_plus(*orig, v_mult(*dir, dist_i));
-			*n = normalize(v_minus(*hit, ((t_sphere *)(listobj->data))->pos));
-			*material = ((t_sphere *)(listobj->data))->material;
+			if (SPHERE->ray_intersect(orig, dir, &dist_i, *SPHERE) && dist_i < spheres_dist)
+			{
+				spheres_dist = dist_i;
+				// d = minf(spheres_dist, d);
+				*hit = v_plus(*orig, v_mult(*dir, dist_i));
+				*n = normalize(v_minus(*hit, SPHERE->pos));
+				*material = SPHERE->material;
+			}
+		}
+		if(listobj->name == 'p')
+		{
+			if(SQUARE->ray_intersect(orig, dir, &dist_i, *SQUARE))
+			{
+				checkboard_dist = dist_i;
+				// d = minf(checkboard_dist, d);
+				*hit = v_plus(*orig, v_mult(*dir,dist_i));
+				*n = normalize(v_minus(*hit, SQUARE->pos));
+				*material = SQUARE->material;
+			}
 		}
 		listobj = listobj->next;
-	}
-	if (ft_fabs(dir->y) > 0.001)
-	{
-		float d = -(orig->y + 4)/ dir->y; //equation y = -4;
-		vect3f pt = v_plus(*orig,v_mult(*dir,d));
-		if(d > 0 && ft_fabs(pt.x)<10 && pt.z<-10 && pt.z>-30 && d<spheres_dist)
-		{
-			checkboard_dist = d;
-			*hit = pt;
-			*n = c_vect3f(0,1,0);
-			material->color = ((int)(.5*hit->x+1000) + (int)(.5*hit->z)) & 1 ? c_vect3f(0.3,0.3,0.3) : c_vect3f(0.3,0.2, 0.1);
-			material->albedo.i = 0.8;
-			material->albedo.j = 0.25;
-			material->albedo.k = 0.0;
-			material->albedo.l = 0.0;
-			material->refractive_index = 1;
-			material->specular_expo = 50;
-		}
 	}
 	return (minf(spheres_dist, checkboard_dist) < 1000);
 }
@@ -147,12 +124,13 @@ vect3f	cast_ray(const vect3f orig, const vect3f dir, const t_list *listobj, cons
 
 void	*render(t_list *listobj, t_list *listlight, const int width, const int height)
 {
-	vect3f			*framebuffer[width];
+	vect3f			**framebuffer;
 	size_t			i[2];
 	void			*mlx[2];
-	const float		fov = M_PI / 3.; // int donc = 1 mais bientot float
-	float			vue[2];
+	const float		fov = M_PI / 3.;
+	float			vue[3];
 
+	framebuffer = malloc(sizeof(vect3f *) * width);
 	mlx[0] = mlx_init();
 	mlx[1] = mlx_new_window(mlx[0], width, height, "Image");
 	i[0] = 0;
@@ -162,9 +140,12 @@ void	*render(t_list *listobj, t_list *listlight, const int width, const int heig
 		i[1] = 0;
 		while (i[1] < height)
 		{
-			vue[0] = (2 * (i[0] + 0.5) / width - 1) * tan(fov / 2) * width / height;
+			float pitch = M_PI;
+			float yaw =  0;
+			vue[2] = -1;
+			vue[0] = ((2 * (i[0] + 0.5) / width - 1) * tan(fov / 2) * width / height);
 			vue[1] = -(2 * (i[1] + 0.5) / height - 1) * tan(fov / 2);
-			mlx_pixel_put(mlx[0], mlx[1], i[0], i[1], c_color(framebuffer[i[0]][i[1]] = cast_ray(c_vect3f(0, 0, 0), normalize(c_vect3f(vue[0], vue[1], -1)), listobj, listlight, 0)));
+			mlx_pixel_put(mlx[0], mlx[1], i[0], i[1], c_color(framebuffer[i[0]][i[1]] = cast_ray(c_vect3f(0, 0, 0), normalize(c_vect3f(vue[0], vue[1], vue[2])), listobj, listlight, 0)));
 			i[1]++;
 		}
 		free(framebuffer[i[0]]);
@@ -178,23 +159,45 @@ int		main(void)
 	const int width = 1024;
 	const int height = 768;
 	void *mlx;
-	t_list *spheres = NULL;
+	t_list *objet = NULL;
 	t_list *listlight = NULL;
+	t_square *square;
+	t_square *square2;
 	
 	t_material ivoire = c_material(c_vect3f(0.4, 0.4, 0.3), c_vect4f(0.6, 0.3, 0.1, 0), 1.0, 50.);
 	t_material redrubber = c_material(c_vect3f(0.3, 0.1, 0.1), c_vect4f(0.9, 0.1, 0.0, 0), 1.0, 10.);
 	t_material glass = c_material(c_vect3f(0.6, 0.7, 0.8), c_vect4f(0, 0.5, 0.1, 0.8), 1.5, 125.);
 	t_material mirroir = c_material(c_vect3f(1, 1, 1), c_vect4f(0, 10.0, 0.8, 0), 1.0, 1425.);
+	t_material plane = c_material(c_vect3f(0.9, 0.3, 0.3), c_vect4f(10, 0.3, 0.1, 0), 1.0, 125.);
 
-	c_sphere(&spheres, c_vect3f(-3, 0, -16), ivoire, 2);
-	c_sphere(&spheres, c_vect3f(-1, -1.5, -12), glass, 2);
-	c_sphere(&spheres, c_vect3f(1.5, -0.5, -18), redrubber, 3);
-	c_sphere(&spheres, c_vect3f(7, 5, -18), mirroir, 4);
+	square = malloc(sizeof(t_square));
+	square->pos = c_vect3f(0, -4, 0);
+	square->taille.a = 10;
+	square->taille.b = 5;
+	square->material = ivoire;
+	square->ray_intersect = ray_intersect_square;
+
+	square2 = malloc(sizeof(t_square));
+	square2->pos = c_vect3f(0, -1.5, 0);
+	square2->taille.a = 5;
+	square2->taille.b = 5;
+	square2->material = ivoire;
+	square2->ray_intersect = ray_intersect_square;
+
+	c_sphere(&objet, c_vect3f(-1, -1.5, -12), glass, 2, ray_intersect_sphere);
+	c_sphere(&objet, c_vect3f(1.5, -0.5, -18), redrubber, 3,ray_intersect_sphere);
+	c_sphere(&objet, c_vect3f(-3, 0, -16), ivoire, 2, ray_intersect_sphere);
+	c_sphere(&objet, c_vect3f(7, 5, -18), mirroir, 4, ray_intersect_sphere);
+	ft_lstadd_front(&objet, ft_lstnew(square, 'p'));
+	ft_lstadd_front(&objet, ft_lstnew(square2, 'p'));
+	
+
+
 
 	c_light(&listlight, c_vect3f(-20, 20, 20), c_vect3f(1, 1, 1), 1.5);
 	c_light(&listlight, c_vect3f(30, 50, -25), c_vect3f(1, 1, 1), 1.8);
 	c_light(&listlight, c_vect3f(30, 20, 30), c_vect3f(1, 1, 1), 1.7);
 
-	mlx = render(spheres, listlight, width, height);
+	mlx = render(objet, listlight, width, height);
 	mlx_loop(mlx);
 }
