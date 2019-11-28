@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/28 18:14:04 by raphael          ###   ########.fr       */
+/*   Updated: 2019/11/28 23:58:44 by raphael          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ float	norm(vect3f a)
 
 vect3f	normalize(vect3f this)
 {
-	return (v_div(this, norm(this)));
+	return (v_mult(this, 1. / sqrtf(this.x * this.x + this.y * this.y + this.z * this.z)));
 }
 
 float v_dot(vect3f a, vect3f b)

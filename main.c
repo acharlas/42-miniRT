@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/28 17:10:03 by raphael          ###   ########.fr       */
+/*   Updated: 2019/11/28 23:56:36 by raphael          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 				*material = SPHERE->material;
 			}
 		}
-		if(listobj->name == 'p')
+		else if(listobj->name == 'p')
 		{
 			if(SQUARE->ray_intersect(orig, dir, &dist_i, *SQUARE))
 			{
@@ -99,8 +99,9 @@ vect3f	cast_ray(const vect3f orig, const vect3f dir, const t_list *listobj, cons
 	{
 		light_dir = normalize(v_minus(((t_light *)(listlight->data))->pos, point));
 		float light_distance = norm(v_minus(((t_light *)(listlight->data))->pos, point));
+		float lightdot = v_dot(light_dir, n);
 
-		vect3f shadow_origi = v_dot(light_dir, n) < 0 ? v_minus(point, v_mult(n, 0.001)) : v_plus(point, v_mult(n, 0.001));
+		vect3f shadow_origi = lightdot < 0 ? v_minus(point, v_mult(n, 0.001)) : v_plus(point, v_mult(n, 0.001));
 		vect3f shadow_pt = c_vect3f(0, 0, 0);
 		vect3f shadow_N = c_vect3f(0, 0, 0);
 		t_material tmpmaterial;
@@ -111,7 +112,7 @@ vect3f	cast_ray(const vect3f orig, const vect3f dir, const t_list *listobj, cons
 			listlight = listlight->next;
 		 	continue;
 		}
-		diffuse_light_intensity += ((t_light *)(listlight->data))->intensity * maxf(0.f, v_dot(light_dir, n));
+		diffuse_light_intensity += ((t_light *)(listlight->data))->intensity * maxf(0.f, lightdot); 
 		specular_light_intensity += powf(maxf(0.f, v_dot(reflect(&light_dir, &n), dir)), material.specular_expo) * ((t_light *)(listlight->data))->intensity; // 50. = specular_light_exposant
 		listlight = listlight->next;
 	}
@@ -126,7 +127,8 @@ void	*render(t_list *listobj, t_list *listlight, const int width, const int heig
 	size_t			i[2];
 	void			*mlx[2];
 	const float		fov = M_PI / 3.;
-	float			vue[3];
+	vect3f			orig = {0, 0, 0};
+	float			tanfov = tan(fov / 2);
 
 	framebuffer = malloc(sizeof(vect3f *) * width);
 	mlx[0] = mlx_init();
@@ -140,22 +142,21 @@ void	*render(t_list *listobj, t_list *listlight, const int width, const int heig
 		{
 			float pitch = M_PI;
 			float yaw =  0;
-			vue[2] = -1;
-			vue[0] = ((2 * (i[0] + 0.5) / width - 1) * tan(fov / 2) * width / height);
-			vue[1] = -(2 * (i[1] + 0.5) / height - 1) * tan(fov / 2);
-			mlx_pixel_put(mlx[0], mlx[1], i[0], i[1], c_color(framebuffer[i[0]][i[1]] = cast_ray(c_vect3f(0, 0, 0), normalize(c_vect3f(vue[0], vue[1], vue[2])), listobj, listlight, 0)));
+			vect3f vue = {((2 * (i[0] + 0.5) / width - 1) * tanfov * width / height), -(2 * (i[1] + 0.5) / height - 1) * tanfov, -1};
+			mlx_pixel_put(mlx[0], mlx[1], i[0], i[1], c_color(framebuffer[i[0]][i[1]] = cast_ray(orig, normalize(vue), listobj, listlight, 0)));
 			i[1]++;
 		}
 		free(framebuffer[i[0]]);
 		i[0]++;
 	}
+	free(framebuffer);
 	return (mlx[0]);
 }
 
 int		main(void)
 {
-	const int width = 1024;
-	const int height = 768;
+	const int width = 500;
+	const int height = 500;
 	void *mlx;
 	t_list *objet = NULL;
 	t_list *listlight = NULL;
@@ -197,5 +198,5 @@ int		main(void)
 	c_light(&listlight, c_vect3f(30, 20, 30), c_vect3f(1, 1, 1), 1.7);
 
 	mlx = render(objet, listlight, width, height);
-	mlx_loop(mlx);
+	//mlx_loop(mlx);
 }
