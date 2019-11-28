@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/28 16:58:57 by raphael          ###   ########.fr       */
+/*   Updated: 2019/11/28 18:14:04 by raphael          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,7 @@
 
 vect3f	c_vect3f(float a, float b, float c)
 {
-	vect3f	out;
-	
-	out.x = a;
-	out.y = b;
-	out.z = c;
+	vect3f	out = {a, b, c};
 	return (out);
 }
 
@@ -44,10 +40,7 @@ vect2f	c_vect2f(float a, float b)
 
 float	norm(vect3f a)
 {
-	float out;
-
-	out = sqrtf(a.x * a.x + a.y * a.y + a.z * a.z);
-	return (out);
+	return (sqrtf(a.x * a.x + a.y * a.y + a.z * a.z));
 }
 
 vect3f	normalize(vect3f this)
@@ -62,32 +55,38 @@ float v_dot(vect3f a, vect3f b)
 
 vect3f	v_mult(vect3f a, float b)
 {
-	return (c_vect3f(a.x * b, a.y * b, a.z * b));
+		vect3f out = {a.x * b, a.y * b, a.z * b};
+	return (out);
 }
 
 vect3f	v_plus(vect3f a, vect3f b)
 {
-	return (c_vect3f(a.x + b.x, a.y + b.y, a.z + b.z));
+		vect3f out = {a.x + b.x, a.y + b.y, a.z + b.z};
+	return (out);
 }
 
 vect3f v_minus(vect3f a, vect3f b)
 {
-	return (c_vect3f(a.x - b.x, a.y - b.y, a.z - b.z));
+		vect3f out = {a.x - b.x, a.y - b.y, a.z - b.z};
+	return (out);
 }
 
 vect3f v_multv(vect3f a, vect3f b)
 {
-	return (c_vect3f(a.x * b.x, a.y * b.y, a.z * b.z));
+		vect3f out = {a.x * b.x, a.y * b.y, a.z * b.z};
+	return (out);
 }
 
 vect3f	v_div(vect3f a, float b)
 {
-	return(c_vect3f(a.x / b, a.y / b, a.z / b));
+		vect3f out = {a.x / b, a.y / b, a.z / b};
+		return (out);
 }
 
 vect3f	v_divv(vect3f a, vect3f b)
 {
-	return(c_vect3f(a.x / b.x, a.y / b.y, a.z / b.z));
+		vect3f out = {a.x / b.x, a.y / b.y, a.z / b.z};
+	return(out);
 }
 
 bool	ray_intersect_sphere(const vect3f *orig, const vect3f *dir, float *t0, const t_sphere sphere)
