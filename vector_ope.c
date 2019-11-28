@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/27 20:59:05 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/28 16:58:57 by raphael          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,7 @@ float	norm(vect3f a)
 
 vect3f	normalize(vect3f this)
 {
-	vect3f	out;
-	
-	out.x = this.x / sqrt(pow(this.x,2) + pow(this.y,2) + pow(this.z,2));
-	out.y = this.y / sqrt(pow(this.x,2) + pow(this.y,2) + pow(this.z,2));
-	out.z = this.z / sqrt(pow(this.x,2) + pow(this.y,2) + pow(this.z,2));
-	return (out);
+	return (v_div(this, norm(this)));
 }
 
 float v_dot(vect3f a, vect3f b)
@@ -67,26 +62,17 @@ float v_dot(vect3f a, vect3f b)
 
 vect3f	v_mult(vect3f a, float b)
 {
-	vect3f	c;
-
-	c = c_vect3f(a.x * b, a.y * b, a.z * b);
-	return (c);
+	return (c_vect3f(a.x * b, a.y * b, a.z * b));
 }
 
 vect3f	v_plus(vect3f a, vect3f b)
 {
-	vect3f	c;
-
-	c = c_vect3f(a.x + b.x, a.y + b.y, a.z + b.z);
-	return (c);
+	return (c_vect3f(a.x + b.x, a.y + b.y, a.z + b.z));
 }
 
 vect3f v_minus(vect3f a, vect3f b)
 {
-	vect3f	c;
-
-	c = c_vect3f(a.x - b.x, a.y - b.y, a.z - b.z);
-	return (c);
+	return (c_vect3f(a.x - b.x, a.y - b.y, a.z - b.z));
 }
 
 vect3f v_multv(vect3f a, vect3f b)

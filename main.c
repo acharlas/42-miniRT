@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/27 21:04:47 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/28 17:10:03 by raphael          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,7 @@
 
 vect3f reflect(const vect3f *I, const vect3f *N)
 {
-	vect3f out;
-	out = v_minus(*I, v_mult(*N, (2.f * v_dot(*I, *N))));
-    return (out);
+    return (v_minus(*I, v_mult(*N, (2.f * v_dot(*I, *N)))));
 }
 
 vect3f	refract(const vect3f *I, const vect3f *n, const float eta_t, const float eta_i)
