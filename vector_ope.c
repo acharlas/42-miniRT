@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/29 17:34:41 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/29 18:53:07 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,14 @@ vect3f	v_divv(vect3f a, vect3f b)
 	return(c_vect3f(a.x / b.x, a.y / b.y, a.z / b.z));
 }
 
+vect3f	v_cross(vect3f a, vect3f b)
+{
+	vect3f c;
+
+	c = c_vect3f(a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x);
+	return (c);
+}
+
 bool	ray_intersect_sphere(const vect3f *orig, const vect3f *dir, float *t0, const t_sphere sphere)
 {
 	vect3f	l;
@@ -129,10 +137,10 @@ bool	ray_intersect_sphere(const vect3f *orig, const vect3f *dir, float *t0, cons
 
 bool		ray_intersect_square(const vect3f *orig, const vect3f *dir, float *t0, const t_square square)
 {
-	vect3f v = c_vect3f(0, 1, 0);
+	vect3f v = c_vect3f(0, 1, 0);//normalize(v_minus(square.orie, square.pos));
 	float d = v_dot(v_minus(c_vect3f(0,0,0), v_minus(*orig, square.pos)), v) / v_dot(*dir, v);
-	vect3f pt = v_plus(*orig,v_mult(*dir,d));
-	if(d > 0 && ft_fabs(pt.x) < square.taille.a && pt.z< -square.taille.b && pt.z > -(square.taille.a + square.taille.b))
+	vect3f pt = v_plus(square.pos,v_mult(*dir,d));
+	if(d > 0 && ft_fabs(pt.x) < square.taille.a && ft_fabs(pt.z) < square.taille.b)
 	{
 		*t0 = d;
 		return(1);

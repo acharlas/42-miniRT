@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/29 17:44:24 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/29 19:09:15 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 			{
 				checkboard_dist = dist_i;
 				*hit = v_plus(*orig, v_mult(*dir,dist_i));
-				*n =  c_vect3f(0, 1, 0);
+				*n =  c_vect3f(0, 1, 0);// normalize(v_minus(SQUARE->orie, SQUARE->pos));
 				*material = SQUARE->material;
 			}
 		}
@@ -160,7 +160,6 @@ int		main(void)
 	t_list *objet = NULL;
 	t_list *listlight = NULL;
 	t_square *square;
-	t_square *square2;
 	
 	t_material ivoire = c_material(c_vect3f(0.4, 0.4, 0.3), c_vect4f(0.6, 0.3, 0.1, 0), 1.0, 50.);
 	t_material redrubber = c_material(c_vect3f(0.3, 0.1, 0.1), c_vect4f(0.9, 0.1, 0.0, 0), 1.0, 10.);
@@ -169,18 +168,12 @@ int		main(void)
 	t_material plane = c_material(c_vect3f(0.3, 0.2, 0.1), c_vect4f(0.8, 0.25, 0.0, 0.0), 1.0, 1150.);
 
 	square = malloc(sizeof(t_square));
-	square->pos = c_vect3f(0, -4, 0);
-	square->taille.a = 50;
-	square->taille.b = 50;
+	square->pos = c_vect3f(0, -4, 20);
+	square->taille.a = 10;
+	square->taille.b = 10;
+	square->orie = c_vect3f(0.5, 0.5, 0.5);
 	square->material = plane;
 	square->ray_intersect = ray_intersect_square;
-
-	square2 = malloc(sizeof(t_square));
-	square2->pos = c_vect3f(0, -5.5, 0);
-	square2->taille.a = 50;
-	square2->taille.b = 5;
-	square2->material = plane;
-	square2->ray_intersect = ray_intersect_square;
 
 	ft_lstadd_front(&objet, ft_lstnew(square, 'p'));
 	c_sphere(&objet, c_vect3f(-1, -1.5, -12), glass, 2, ray_intersect_sphere);
@@ -188,15 +181,10 @@ int		main(void)
 	c_sphere(&objet, c_vect3f(-3, 0, -16), ivoire, 2, ray_intersect_sphere);
 	c_sphere(&objet, c_vect3f(7, 5, -18), mirroir, 4, ray_intersect_sphere);
 	
-	// ft_lstadd_front(&objet, ft_lstnew(square2, 'p'));
-	
-
-
-
 	c_light(&listlight, c_vect3f(-20, 20, 20), c_vect3f(1, 1, 1), 1.5);
 	c_light(&listlight, c_vect3f(30, 50, -25), c_vect3f(1, 1, 1), 1.8);
 	c_light(&listlight, c_vect3f(30, 20, 30), c_vect3f(1, 1, 1), 1.7);
 
 	mlx = render(objet, listlight, width, height);
-	// mlx_loop(mlx);
+	mlx_loop(mlx);
 }
