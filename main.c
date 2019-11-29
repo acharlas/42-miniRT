@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/27 21:04:47 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/29 17:44:24 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,33 +35,31 @@ vect3f	refract(const vect3f *I, const vect3f *n, const float eta_t, const float 
 
 int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listobj, vect3f *hit, vect3f *n, t_material *material)
 {
-	float	spheres_dist = FLT_MAX;
-	float checkboard_dist = FLT_MAX;
+	
 	float d;
 	float	dist_i = 0;
-	
+	float	spheres_dist = FLT_MAX;
+	float checkboard_dist = FLT_MAX;
 	while (listobj)
 	{
+		if(listobj->name == 'p')
+		{
+			if(SQUARE->ray_intersect(orig, dir, &dist_i, *SQUARE) && dist_i < checkboard_dist && dist_i < spheres_dist)
+			{
+				checkboard_dist = dist_i;
+				*hit = v_plus(*orig, v_mult(*dir,dist_i));
+				*n =  c_vect3f(0, 1, 0);
+				*material = SQUARE->material;
+			}
+		}
 		if(listobj->name == 's')
 		{
-			if (SPHERE->ray_intersect(orig, dir, &dist_i, *SPHERE) && dist_i < spheres_dist)
+			if (SPHERE->ray_intersect(orig, dir, &dist_i, *SPHERE) && dist_i < spheres_dist && dist_i < checkboard_dist)
 			{
 				spheres_dist = dist_i;
-				// d = minf(spheres_dist, d);
 				*hit = v_plus(*orig, v_mult(*dir, dist_i));
 				*n = normalize(v_minus(*hit, SPHERE->pos));
 				*material = SPHERE->material;
-			}
-		}
-		if(listobj->name == 'p')
-		{
-			if(SQUARE->ray_intersect(orig, dir, &dist_i, *SQUARE))
-			{
-				checkboard_dist = dist_i;
-				// d = minf(checkboard_dist, d);
-				*hit = v_plus(*orig, v_mult(*dir,dist_i));
-				*n = normalize(v_minus(*hit, SQUARE->pos));
-				*material = SQUARE->material;
 			}
 		}
 		listobj = listobj->next;
@@ -168,28 +166,29 @@ int		main(void)
 	t_material redrubber = c_material(c_vect3f(0.3, 0.1, 0.1), c_vect4f(0.9, 0.1, 0.0, 0), 1.0, 10.);
 	t_material glass = c_material(c_vect3f(0.6, 0.7, 0.8), c_vect4f(0, 0.5, 0.1, 0.8), 1.5, 125.);
 	t_material mirroir = c_material(c_vect3f(1, 1, 1), c_vect4f(0, 10.0, 0.8, 0), 1.0, 1425.);
-	t_material plane = c_material(c_vect3f(0.9, 0.3, 0.3), c_vect4f(10, 0.3, 0.1, 0), 1.0, 125.);
+	t_material plane = c_material(c_vect3f(0.3, 0.2, 0.1), c_vect4f(0.8, 0.25, 0.0, 0.0), 1.0, 1150.);
 
 	square = malloc(sizeof(t_square));
 	square->pos = c_vect3f(0, -4, 0);
-	square->taille.a = 10;
-	square->taille.b = 5;
-	square->material = ivoire;
+	square->taille.a = 50;
+	square->taille.b = 50;
+	square->material = plane;
 	square->ray_intersect = ray_intersect_square;
 
 	square2 = malloc(sizeof(t_square));
-	square2->pos = c_vect3f(0, -1.5, 0);
-	square2->taille.a = 5;
+	square2->pos = c_vect3f(0, -5.5, 0);
+	square2->taille.a = 50;
 	square2->taille.b = 5;
-	square2->material = ivoire;
+	square2->material = plane;
 	square2->ray_intersect = ray_intersect_square;
 
+	ft_lstadd_front(&objet, ft_lstnew(square, 'p'));
 	c_sphere(&objet, c_vect3f(-1, -1.5, -12), glass, 2, ray_intersect_sphere);
 	c_sphere(&objet, c_vect3f(1.5, -0.5, -18), redrubber, 3,ray_intersect_sphere);
 	c_sphere(&objet, c_vect3f(-3, 0, -16), ivoire, 2, ray_intersect_sphere);
 	c_sphere(&objet, c_vect3f(7, 5, -18), mirroir, 4, ray_intersect_sphere);
-	ft_lstadd_front(&objet, ft_lstnew(square, 'p'));
-	ft_lstadd_front(&objet, ft_lstnew(square2, 'p'));
+	
+	// ft_lstadd_front(&objet, ft_lstnew(square2, 'p'));
 	
 
 
@@ -199,5 +198,5 @@ int		main(void)
 	c_light(&listlight, c_vect3f(30, 20, 30), c_vect3f(1, 1, 1), 1.7);
 
 	mlx = render(objet, listlight, width, height);
-	mlx_loop(mlx);
+	// mlx_loop(mlx);
 }

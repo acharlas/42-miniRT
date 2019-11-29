@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/27 20:59:05 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/29 17:34:41 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,16 +129,13 @@ bool	ray_intersect_sphere(const vect3f *orig, const vect3f *dir, float *t0, cons
 
 bool		ray_intersect_square(const vect3f *orig, const vect3f *dir, float *t0, const t_square square)
 {
-	if (ft_fabs(dir->y) > 0.001)
+	vect3f v = c_vect3f(0, 1, 0);
+	float d = v_dot(v_minus(c_vect3f(0,0,0), v_minus(*orig, square.pos)), v) / v_dot(*dir, v);
+	vect3f pt = v_plus(*orig,v_mult(*dir,d));
+	if(d > 0 && ft_fabs(pt.x) < square.taille.a && pt.z< -square.taille.b && pt.z > -(square.taille.a + square.taille.b))
 	{
-		float d = -(orig->y - square.pos.y)/ dir->y; 
-		vect3f pt = v_plus(*orig,v_mult(*dir,d));
-		if(d > 0 && ft_fabs(pt.x)<10 && pt.z<-10 && pt.z>-30)
-		{
-			*t0 = d;
-			return(1);
-		}
-		return (0);
+		*t0 = d;
+		return(1);
 	}
 	return (0);
 }
