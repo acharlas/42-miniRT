@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/29 18:53:07 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/11/30 14:41:55 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,9 @@ vect3f	v_mult(vect3f a, float b)
 {
 	vect3f	c;
 
-	c = c_vect3f(a.x * b, a.y * b, a.z * b);
+	c.x = a.x * b;
+	c.y = a.y * b;
+	c.z = a.z * b;
 	return (c);
 }
 
@@ -77,7 +79,9 @@ vect3f	v_plus(vect3f a, vect3f b)
 {
 	vect3f	c;
 
-	c = c_vect3f(a.x + b.x, a.y + b.y, a.z + b.z);
+	c.x = a.x + b.x;
+	c.y = a.y + b.y;
+	c.z = a.z + b.z;
 	return (c);
 }
 
@@ -85,30 +89,49 @@ vect3f v_minus(vect3f a, vect3f b)
 {
 	vect3f	c;
 
-	c = c_vect3f(a.x - b.x, a.y - b.y, a.z - b.z);
+	c.x = a.x - b.x;
+	c.y = a.y - b.y;
+	c.z = a.z - b.z;
 	return (c);
 }
 
 vect3f v_multv(vect3f a, vect3f b)
 {
-	return (c_vect3f(a.x * b.x, a.y * b.y, a.z * b.z));
+	vect3f out;
+
+	out.x = a.x * b.x;
+	out.y = a.y * b.y;
+	out.z = a.z * b.z;
+	return (out);
 }
 
 vect3f	v_div(vect3f a, float b)
 {
-	return(c_vect3f(a.x / b, a.y / b, a.z / b));
+	vect3f out;
+
+	out.x = a.x / b;
+	out.y = a.y / b;
+	out.z = a.z / b;
+	return (out);
 }
 
 vect3f	v_divv(vect3f a, vect3f b)
 {
-	return(c_vect3f(a.x / b.x, a.y / b.y, a.z / b.z));
+	vect3f out;
+
+	out.x = a.x / b.x;
+	out.y = a.y / b.y;
+	out.z = a.z / b.z;
+	return (out);
 }
 
 vect3f	v_cross(vect3f a, vect3f b)
 {
 	vect3f c;
 
-	c = c_vect3f(a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x);
+	c.x = a.y*b.z - a.z*b.y; 
+	c.y = a.z*b.x - a.x*b.z; 
+	c.z = a.x*b.y - a.y*b.x;
 	return (c);
 }
 
@@ -135,9 +158,9 @@ bool	ray_intersect_sphere(const vect3f *orig, const vect3f *dir, float *t0, cons
 	return (1);
 }
 
-bool		ray_intersect_square(const vect3f *orig, const vect3f *dir, float *t0, const t_square square)
+bool	ray_intersect_square(const vect3f *orig, const vect3f *dir, float *t0, const t_square square)
 {
-	vect3f v = c_vect3f(0, 1, 0);//normalize(v_minus(square.orie, square.pos));
+	vect3f v = normalize(v_multv(c_vect3f(1, 1, 1),square.orie));
 	float d = v_dot(v_minus(c_vect3f(0,0,0), v_minus(*orig, square.pos)), v) / v_dot(*dir, v);
 	vect3f pt = v_plus(square.pos,v_mult(*dir,d));
 	if(d > 0 && ft_fabs(pt.x) < square.taille.a && ft_fabs(pt.z) < square.taille.b)
