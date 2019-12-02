@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/12/02 14:58:27 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/12/02 19:19:05 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,26 +36,37 @@ vect3f	refract(const vect3f *I, const vect3f *n, const float eta_t, const float 
 int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listobj, vect3f *hit, vect3f *n, t_material *material)
 {
 	
-	float d;
+	double d;
 	float	dist_i = 0;
 	float	spheres_dist = FLT_MAX;
 	float square_dist = FLT_MAX;
 	float cylinder_dist = FLT_MAX;
 	while (listobj)
 	{
+		// if (listobj->name == 'c')
+		// {
+		// 	if(CYLINDER->ray_intersect(orig, dir, &dist_i, *CYLINDER) && dist_i < cylinder_dist && dist_i < square_dist && dist_i < spheres_dist)
+		// 	{
+		// 		cylinder_dist = dist_i;
+		// 		*hit = v_plus(*orig, v_mult(*dir, dist_i));
+		// 		d = v_dot(*dir, v_mult(CYLINDER->rot, dist_i)) + v_dot(v_minus(*orig, CYLINDER->pos), CYLINDER->rot);
+		// 		*n = normalize(v_minus(v_plus(v_mult(*dir, dist_i),v_minus(*orig, CYLINDER->pos)), v_mult(CYLINDER->rot, d)));
+		// 		*material = CYLINDER->material;
+		// 	}
+		// }
 		if(listobj->name == 'p')
 		{
 			if(SQUARE->ray_intersect(orig, dir, &dist_i, *SQUARE) && dist_i < square_dist && dist_i < spheres_dist && dist_i < cylinder_dist)
 			{
 				square_dist = dist_i;
-				*hit = v_plus(*orig, v_mult(*dir,dist_i));
-				*n = *n = normalize(SQUARE->rot);
+				*hit = v_plus(*orig, v_mult(*dir, dist_i));
+				*n = normalize(v_minus(v_multv(SQUARE->pos, SQUARE->rot), *hit));
 				*material = SQUARE->material;
 			}
 		}
 		if(listobj->name == 's')
 		{
-			if (SPHERE->ray_intersect(orig, dir, &dist_i, *SPHERE) && dist_i < spheres_dist && dist_i < square_dist && dist_i < cylinder_dist)
+			if (SPHERE->ray_intersect(orig, dir, &dist_i, *SPHERE) && dist_i < spheres_dist && dist_i < cylinder_dist && dist_i < square_dist)
 			{
 				spheres_dist = dist_i;
 				*hit = v_plus(*orig, v_mult(*dir, dist_i));
@@ -63,20 +74,9 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 				*material = SPHERE->material;
 			}
 		}
-		if (listobj->name == 'c')
-		{
-			if(CYLINDER->ray_intersect(orig, dir, &dist_i, *CYLINDER) && dist_i < cylinder_dist && dist_i < square_dist && dist_i < spheres_dist)
-			{
-				cylinder_dist = dist_i;
-				*hit = v_plus(*orig, v_mult(*dir, dist_i));
-				float m = v_dot(*dir, v_mult(CYLINDER->rot, dist_i)) + v_dot(v_minus(*orig, CYLINDER->pos), CYLINDER->rot);
-				*n = ;// normalize(v_minus(v_plus(v_mult(*dir, dist_i),*orig), v_mult(CYLINDER->rot, m)));
-				*material = CYLINDER->material;
-			}
-		}
 		listobj = listobj->next;
 	}
-	return (minf(minf(spheres_dist, square_dist), cylinder_dist )< 1000);
+	return (minf(spheres_dist, square_dist)< 1000);
 }
 
 vect3f	cast_ray(const vect3f orig, const vect3f dir, const t_list *listobj, const t_list *listlight, size_t depth)
@@ -181,32 +181,31 @@ int		main(void)
 	t_material plane = c_material(c_vect3f(0.3, 0.2, 0.1), c_vect4f(0.8, 0.25, 0.0, 0.0), 1.0, 1150.);
 
 	square = malloc(sizeof(t_square));
-	square->pos = c_vect3f(0, -4, 18);
+	square->pos = c_vect3f(0, -4, 0);
 	square->taille.a = 10;
 	square->taille.b = 10;
-	square->rot = c_vect3f(0, 0.5, 0);
+	square->rot = c_vect3f(0, 1, 0);
 	square->material = plane;
 	square->ray_intersect = ray_intersect_square;
 
 	cylinder = malloc(sizeof(t_cylinder));
-	cylinder->pos = c_vect3f(8, -4, 12);
+	cylinder->pos = c_vect3f(0, 2, 12);
 	cylinder->h = 10;
 	cylinder->material = plane;
 	cylinder->r = 0.5;
-	cylinder->rot = normalize(c_vect3f(0, 1, 0));
+	cylinder->rot = normalize(c_vect3f(1, 1, 0));
 	cylinder->ray_intersect = ray_intersect_cylinder;
 	
-	ft_lstadd_front(&objet, ft_lstnew(cylinder, 'c'));
+	
 	c_sphere(&objet, c_vect3f(-1, -1.5, -12), glass, 2, ray_intersect_sphere);
-	ft_lstadd_front(&objet, ft_lstnew(square, 'p'));
 	c_sphere(&objet, c_vect3f(1.5, -0.5, -18), redrubber, 3,ray_intersect_sphere);
 	c_sphere(&objet, c_vect3f(-3, 0, -16), ivoire, 2, ray_intersect_sphere);
 	c_sphere(&objet, c_vect3f(7, 5, -18), mirroir, 4, ray_intersect_sphere);
-	
+	//ft_lstadd_front(&objet, ft_lstnew(cylinder, 'c'));
 	c_light(&listlight, c_vect3f(-20, 20, 20), c_vect3f(1, 1, 1), 1.5);
 	c_light(&listlight, c_vect3f(30, 50, -25), c_vect3f(1, 1, 1), 1.8);
 	c_light(&listlight, c_vect3f(30, 20, 30), c_vect3f(1, 1, 1), 1.7);
-	
+	ft_lstadd_front(&objet, ft_lstnew(square, 'p'));
 	mlx = render(objet, listlight, width, height);
 	mlx_loop(mlx);
 }
