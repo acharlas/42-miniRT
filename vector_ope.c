@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/30 14:41:55 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/12/02 15:00:15 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,13 +160,35 @@ bool	ray_intersect_sphere(const vect3f *orig, const vect3f *dir, float *t0, cons
 
 bool	ray_intersect_square(const vect3f *orig, const vect3f *dir, float *t0, const t_square square)
 {
-	vect3f v = normalize(v_multv(c_vect3f(1, 1, 1),square.orie));
-	float d = v_dot(v_minus(c_vect3f(0,0,0), v_minus(*orig, square.pos)), v) / v_dot(*dir, v);
+	float d = (v_dot(square.rot, square.pos) - v_dot(square.rot, *orig)) / v_dot(square.rot, *dir);
 	vect3f pt = v_plus(square.pos,v_mult(*dir,d));
-	if(d > 0 && ft_fabs(pt.x) < square.taille.a && ft_fabs(pt.z) < square.taille.b)
+	if(d > 0.0001 && ft_fabs(pt.x) < square.taille.a && ft_fabs(pt.z) < square.taille.b)
 	{
 		*t0 = d;
 		return(1);
 	}
+	return (0);
+}
+
+bool	ray_intersect_cylinder(const vect3f *orig, const vect3f *dir, float *t0, const t_cylinder cylinder)
+{
+	double disc;
+
+
+	vect3f dist = v_minus(*orig, cylinder.pos);
+	normalize(cylinder.rot);
+	float a = v_dot(*dir, *dir) - pow(v_dot(*dir, cylinder.rot), 2);
+	float b = 2 * (v_dot(*dir, dist) - (v_dot(*dir, cylinder.rot) * v_dot(dist, cylinder.rot)));
+	float c = v_dot(dist, dist) - pow(v_dot(dist, cylinder.rot), 2) - pow(cylinder.r, 2);
+	disc = b * b - 4 * a * c;
+	vect3f pt = v_plus(cylinder.pos,v_mult(*dir,disc));
+	if (disc < 0)
+		return (0);
+	*t0 = (-b + sqrtf(disc)) / (2 * a);
+	float t1 = (-b - sqrtf(disc)) / (2 * a);
+	if (*t0 > t1)
+		*t0 = t1;
+	if(ft_fabs(pt.z) > 0 && ft_fabs(pt.z) < cylinder.h)
+		return (1);
 	return (0);
 }

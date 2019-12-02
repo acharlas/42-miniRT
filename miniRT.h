@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2019/11/29 18:21:47 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/12/02 11:41:07 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <stdbool.h>
 #define SPHERE ((t_sphere *)(listobj)->data)
 #define SQUARE ((t_square *)(listobj)->data)
+#define CYLINDER ((t_cylinder *)(listobj)->data)
 
 
 typedef	struct s_vect3f
@@ -67,7 +68,7 @@ typedef struct s_square
 	vect3f		pos;
 	vect2f		taille;
 	t_material	material;
-	vect3f		orie;
+	vect3f		rot;
 	bool			(*ray_intersect)(const vect3f *, const vect3f *, float *, const struct s_square);
 }				t_square;
 
@@ -91,6 +92,16 @@ typedef struct s_light
 	vect3f color;
 	float intensity;
 }				t_light;
+
+typedef struct	s_cylinder
+{
+	vect3f		pos;
+	vect3f		rot;
+	float		r;
+	float		h;
+	t_material	material;
+	bool			(*ray_intersect)(const vect3f *, const vect3f *, float *, const struct s_cylinder);
+}				t_cylinder;
 
 vect3f		c_vect3f(float a, float b, float c);
 vect3f		normalize(vect3f this);
@@ -118,5 +129,7 @@ vect3f	v_div(vect3f a, float b);
 vect3f	v_divv(vect3f a, vect3f b);
 bool		ray_intersect_sphere(const vect3f *orig, const vect3f *dir, float *t0, const t_sphere sphere);
 bool		ray_intersect_square(const vect3f *orig, const vect3f *dir, float *t0, const t_square square);
+
+bool	ray_intersect_cylinder(const vect3f *orig, const vect3f *dir, float *t0, const t_cylinder cylinder);
 
 #endif
