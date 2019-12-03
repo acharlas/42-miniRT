@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2019/12/02 11:41:07 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/12/03 17:12:08 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ typedef struct s_square
 	vect3f		rot;
 	bool			(*ray_intersect)(const vect3f *, const vect3f *, float *, const struct s_square);
 }				t_square;
+
 
 typedef struct s_camera
 {

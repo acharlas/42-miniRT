@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2019/12/02 19:16:35 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/12/03 17:53:19 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,9 @@ vect3f	normalize(vect3f this)
 {
 	vect3f	out;
 	
-	out.x = this.x / sqrt(pow(this.x,2) + pow(this.y,2) + pow(this.z,2));
-	out.y = this.y / sqrt(pow(this.x,2) + pow(this.y,2) + pow(this.z,2));
-	out.z = this.z / sqrt(pow(this.x,2) + pow(this.y,2) + pow(this.z,2));
+	out.x = this.x / sqrtf(pow(this.x,2) + pow(this.y,2) + pow(this.z,2));
+	out.y = this.y / sqrtf(pow(this.x,2) + pow(this.y,2) + pow(this.z,2));
+	out.z = this.z / sqrtf(pow(this.x,2) + pow(this.y,2) + pow(this.z,2));
 	return (out);
 }
 
@@ -162,14 +162,14 @@ bool	ray_intersect_sphere(const vect3f *orig, const vect3f *dir, float *t0, cons
 
 bool	ray_intersect_square(const vect3f *orig, const vect3f *dir, float *t0, const t_square square)
 {	
-	vect3f n = v_minus(v_multv(square.rot,square.pos), square.pos);
-	float denom = v_dot(n, *dir);
-	if (denom > 0.0001)
+	vect3f n = normalize(square.rot);
+	float denom = v_dot(*dir, n);
+	if (ft_fabs(denom) > 0.001)
 	{
-		vect3f polo = v_minus(square.pos, *orig);
+		vect3f polo = v_minus(*orig, square.pos);
 		*t0 = v_dot(polo, n) / denom;
-		vect3f pt = v_plus(square.pos,v_mult(*dir,*t0));
-		if	(*t0 >= 0 && ft_fabs(pt.x) < square.taille.a + 5 && ft_fabs(pt.z) < square.taille.b)
+		vect3f pt = v_plus(*orig,v_mult(*dir,*t0));
+		if	(*t0 >= 0)
 			return (1);
 	}
 	return (0);
@@ -177,26 +177,22 @@ bool	ray_intersect_square(const vect3f *orig, const vect3f *dir, float *t0, cons
 
 bool	ray_intersect_cylinder(const vect3f *orig, const vect3f *dir, float *t0, const t_cylinder cylinder)
 {
-	double disc;
+	vect3f v = normalize(cylinder.rot);
+	vect3f x = v_minus(*orig, cylinder.pos);
+	float a = v_dot(*dir, *dir) - powf(v_dot(*dir, v), 2);
+	float b = 2 * (v_dot(*dir, x) - (v_dot(*dir,v) * v_dot(x,v)));
+	float c = v_dot(x,x) - powf(v_dot(x,v), 2) - powf(cylinder.r, 2);
 
-	// vect3f l = v_minus(cylinder.pos, *orig);
-	// float tca = v_dot(l, *dir);
-	// float d = 
-	// vect3f dist = v_minus(cylinder.pos, *orig);
-	// vect3f r = normalize(cylinder.rot);
-	// float a = v_dot(*dir, *dir) - powf(v_dot(*dir, r), 2);
-	// float b = 2 * (v_dot(*dir, dist) - (v_dot(*dir, r) * v_dot(dist, r)));
-	// float c = v_dot(dist, dist) - powf(v_dot(dist, r), 2) - powf(cylinder.r, 2);
-	// disc = b * b - 4 * a * c;
-	// 
-	// if (disc < 0)
-	// 	return (0);
-	// *t0 = (-b + sqrtf(disc)) / (2 * a);
-	// float t1 = (-b - sqrtf(disc)) / (2 * a);
-	// if (*t0 < t1)
-	// 	*t0 = t1;
-	// vect3f pt = v_plus(cylinder.pos,v_mult(*dir,*t0));
-	// if (pt.y < cylinder.h && pt.y > 0)
-	// 	return (1);
-	return (0);
+	float delta = b * b - 4 * a * c;
+	if (delta < 0)
+		return (0);
+	float x1 = (-b + sqrtf(delta)) / (a * 2);
+	float x2 = (-b - sqrtf(delta)) / (a * 2);
+	float m1 = v_dot(*dir, v) * x1 + v_dot(x,v);
+	float m2 = v_dot(*dir, v) * x2 + v_dot(x,v);
+	if (m1 < 0 && m1 > cylinder.h)
+		*t0 = m2;
+	else
+		*t0 = m1;
+	return (1);
 }
