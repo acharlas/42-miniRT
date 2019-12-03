@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2019/12/03 17:53:19 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/12/03 18:41:49 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,11 +188,17 @@ bool	ray_intersect_cylinder(const vect3f *orig, const vect3f *dir, float *t0, co
 		return (0);
 	float x1 = (-b + sqrtf(delta)) / (a * 2);
 	float x2 = (-b - sqrtf(delta)) / (a * 2);
-	float m1 = v_dot(*dir, v) * x1 + v_dot(x,v);
-	float m2 = v_dot(*dir, v) * x2 + v_dot(x,v);
-	if (m1 < 0 && m1 > cylinder.h)
-		*t0 = m2;
-	else
-		*t0 = m1;
-	return (1);
+	if (x1 < x2 && x1 > 0)
+	{
+		*t0 = x1;
+		return (1);
+	}
+	else if (x2 < x1 && x2 > 0)
+	{
+		*t0 = x2;
+		return (1);
+	}
+	return (0);
 }
+
+bool	ray_intersect_cone(const vect3f *orig, const vect3f *dir, float *t0, const t_cone cone)

@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/12/03 17:55:11 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/12/03 18:29:43 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,9 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 			if(CYLINDER->ray_intersect(orig, dir, &dist_i, *CYLINDER) && dist_i < cylinder_dist && dist_i < square_dist && dist_i < spheres_dist)
 			{
 				cylinder_dist = dist_i;
+				float m = v_dot(*dir, normalize(CYLINDER->rot)) * dist_i + v_dot(v_minus(*orig, CYLINDER->pos),normalize(CYLINDER->rot));
 				*hit = v_plus(*orig, v_mult(*dir, dist_i));
-				*n = normalize((v_minus(v_minus(*hit,CYLINDER->pos), v_mult(normalize(CYLINDER->rot), dist_i))));
+				*n = normalize((v_minus(v_minus(*hit,CYLINDER->pos), v_mult(normalize(CYLINDER->rot), m))));
 				*material = CYLINDER->material;
 			}
 		}
@@ -75,7 +76,7 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 		}
 		listobj = listobj->next;
 	}
-	return (minf(spheres_dist, square_dist)< 1000);
+	return (minf(minf(spheres_dist, square_dist), cylinder_dist)< 1000);
 }
 
 vect3f	cast_ray(const vect3f orig, const vect3f dir, const t_list *listobj, const t_list *listlight, size_t depth)
@@ -188,7 +189,7 @@ int		main(void)
 	square->ray_intersect = ray_intersect_square;
 
 	cylinder = malloc(sizeof(t_cylinder));
-	cylinder->pos = c_vect3f(0, 2, 20);
+	cylinder->pos = c_vect3f(0, 0, -15);
 	cylinder->h = 1;
 	cylinder->material = ivoire;
 	cylinder->r = 1;
@@ -204,7 +205,7 @@ int		main(void)
 	c_light(&listlight, c_vect3f(-20, 20, 20), c_vect3f(1, 1, 1), 1.5);
 	c_light(&listlight, c_vect3f(30, 50, -25), c_vect3f(1, 1, 1), 1.8);
 	c_light(&listlight, c_vect3f(30, 20, 30), c_vect3f(1, 1, 1), 1.7);
-	// ft_lstadd_front(&objet, ft_lstnew(square, 'p'));
+	ft_lstadd_front(&objet, ft_lstnew(square, 'p'));
 	mlx = render(objet, listlight, width, height);
 	mlx_loop(mlx);
 }
