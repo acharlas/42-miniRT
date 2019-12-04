@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/12/04 16:05:56 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/12/04 18:52:23 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,22 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 	float square_dist = FLT_MAX;
 	float cylinder_dist = FLT_MAX;
 	float cone_dist = FLT_MAX;
+	float triangle_dist = FLT_MAX;
 	while (listobj)
 	{
+		if (ft_strncmp(listobj->name, "tr", 2) == 0)
+		{
+			if(TRIANGLE->ray_intersect(orig, dir, &dist_i, *TRIANGLE) && dist_i < cylinder_dist && dist_i < square_dist && dist_i < spheres_dist && dist_i < cone_dist && dist_i < triangle_dist)
+			{
+				triangle_dist = dist_i;
+				*hit = v_plus(*orig, v_mult(*dir, dist_i));
+				*n = normalize(v_cross(v_minus(TRIANGLE->c2,TRIANGLE->c1), v_minus(TRIANGLE->c3,TRIANGLE->c1)));
+				*material = TRIANGLE->material;
+			}
+		}
 		if (ft_strncmp(listobj->name, "cy", 2) == 0)
 		{
-			if(CYLINDER->ray_intersect(orig, dir, &dist_i, *CYLINDER) && dist_i < cylinder_dist && dist_i < square_dist && dist_i < spheres_dist && dist_i < cone_dist)
+			if(CYLINDER->ray_intersect(orig, dir, &dist_i, *CYLINDER) && dist_i < cylinder_dist && dist_i < square_dist && dist_i < spheres_dist && dist_i < cone_dist && dist_i < triangle_dist)
 			{
 				cylinder_dist = dist_i;
 				float m = v_dot(*dir, normalize(CYLINDER->rot)) * dist_i + v_dot(v_minus(*orig, CYLINDER->pos),normalize(CYLINDER->rot));
@@ -57,7 +68,7 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 		}
 		if(ft_strncmp(listobj->name, "pl", 2) == 0)
 		{
-			if(PLANE->ray_intersect(orig, dir, &dist_i, *PLANE) && dist_i < cylinder_dist && dist_i < square_dist && dist_i < spheres_dist && dist_i < cone_dist)
+			if(PLANE->ray_intersect(orig, dir, &dist_i, *PLANE) && dist_i < cylinder_dist && dist_i < square_dist && dist_i < spheres_dist && dist_i < cone_dist && dist_i < triangle_dist)
 			{
 				square_dist = dist_i;
 				*hit = v_plus(*orig, v_mult(*dir, dist_i));
@@ -67,7 +78,7 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 		}
 		if(ft_strncmp(listobj->name, "sp", 2) == 0)
 		{
-			if (SPHERE->ray_intersect(orig, dir, &dist_i, *SPHERE) && dist_i < cylinder_dist && dist_i < square_dist && dist_i < spheres_dist && dist_i < cone_dist)
+			if (SPHERE->ray_intersect(orig, dir, &dist_i, *SPHERE) && dist_i < cylinder_dist && dist_i < square_dist && dist_i < spheres_dist && dist_i < cone_dist && dist_i < triangle_dist)
 			{
 				spheres_dist = dist_i;
 				*hit = v_plus(*orig, v_mult(*dir, dist_i));
@@ -77,7 +88,7 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 		}
 		if(ft_strncmp(listobj->name, "co", 2) == 0)
 		{
-			if (CONE->ray_intersect(orig, dir, &dist_i, *CONE) && dist_i < cylinder_dist && dist_i < square_dist && dist_i < spheres_dist && dist_i < cone_dist)
+			if (CONE->ray_intersect(orig, dir, &dist_i, *CONE) && dist_i < cylinder_dist && dist_i < square_dist && dist_i < spheres_dist && dist_i < cone_dist && dist_i < triangle_dist)
 			{
 				cone_dist = dist_i;
 				*hit = v_plus(*orig, v_mult(*dir, dist_i));
@@ -89,7 +100,7 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 		}
 		listobj = listobj->next;
 	}
-	return (minf(minf(minf(spheres_dist, square_dist), cylinder_dist), cone_dist)< 1000);
+	return (minf(minf(minf(minf(spheres_dist, square_dist), cylinder_dist), cone_dist), triangle_dist)< 1000);
 }
 
 vect3f	cast_ray(const vect3f orig, const vect3f dir, const t_list *listobj, const t_list *listlight, size_t depth)
@@ -191,10 +202,12 @@ int		main(void)
 	t_material mirroir = c_material(c_vect3f(1, 1, 1), c_vect4f(0, 10.0, 0.8, 0), 1.0, 1425.);
 	t_material plane = c_material(c_vect3f(0.3, 0.2, 0.1), c_vect4f(0.8, 0.25, 0.0, 0.0), 1.0, 10.);
 	
-	c_cylinder(&objet, c_vect3f(0,-10,-20), c_vect3f(0,1,0), plane, 1, 5);
-	c_cone(&objet, c_vect3f(0,-10,-20), c_vect3f(0,1,0), plane, 30);
-	c_plane(&objet, c_vect3f(0, 10, 10), c_vect3f(0, 1, 0), plane);
 	
+
+	c_triangle(&objet, c_vect3f(5,0,-15),c_vect3f(-5,0,-15),c_vect3f(0,5,-15),plane);
+	//c_cylinder(&objet, c_vect3f(0, 0,-15), c_vect3f(0,1,0), plane, 1, 5);
+	//c_cone(&objet, c_vect3f(0,-10,-20), c_vect3f(0,1,0), plane, 30);
+	c_plane(&objet, c_vect3f(0, 10, 10), c_vect3f(0, 1, 0), plane);
 	//c_sphere(&objet, c_vect3f(-1, -1.5, -12), glass, 2);
 	//c_sphere(&objet, c_vect3f(1.5, -0.5, -18), redrubber, 3);
 	//c_sphere(&objet, c_vect3f(-3, 0, -16), ivoire, 2);

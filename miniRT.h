@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2019/12/04 16:31:37 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/12/04 18:52:30 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 #define PLANE ((t_plane *)(listobj)->data)
 #define CYLINDER ((t_cylinder *)(listobj)->data)
 #define CONE ((t_cone *)(listobj)->data)
+#define TRIANGLE ((t_triangle *)(listobj)->data)
 
 typedef	struct s_vect3f
 {
@@ -92,9 +93,11 @@ typedef struct	s_cylinder
 
 typedef struct s_triangle
 {
-	vect3f pos;
-	vect3f rot;
-	
+	vect3f		c1;
+	vect3f		c2;
+	vect3f		c3;
+	t_material	material;
+	bool		(*ray_intersect)(const vect3f *, const vect3f *, float *, const struct s_triangle);
 }				t_triangle;
 
 typedef struct s_camera
@@ -118,7 +121,7 @@ typedef struct s_light
 	float intensity;
 }				t_light;
 
-
+vect3f	v_cross(vect3f a, vect3f b);
 vect3f		c_vect3f(float a, float b, float c);
 vect3f		normalize(vect3f this);
 vect3f		v_minus(vect3f a, vect3f b);
@@ -151,4 +154,6 @@ bool		ray_intersect_sphere(const vect3f *orig, const vect3f *dir, float *t0, con
 bool	ray_intersect_plane(const vect3f *orig, const vect3f *dir, float *t0, const t_plane plane);
 bool	ray_intersect_cylinder(const vect3f *orig, const vect3f *dir, float *t0, const t_cylinder cylinder);
 bool	ray_intersect_cone(const vect3f *orig, const vect3f *dir, float *t0, const t_cone cone);
+bool	ray_intersect_triangle(const vect3f *orig, const vect3f *dir, float *t0, const t_triangle triangle);
+void	c_triangle(t_list **alst, vect3f c1, vect3f c2, vect3f c3,t_material material);
 #endif

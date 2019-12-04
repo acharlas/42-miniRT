@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2019/12/04 15:14:19 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/12/04 18:06:59 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,6 +223,30 @@ bool	ray_intersect_cone(const vect3f *orig, const vect3f *dir, float *t0, const 
 	else if (x2 < x1 && x2 > 0)
 	{
 		*t0 = x2;
+		return (1);
+	}
+	return (0);
+}
+
+bool	ray_intersect_triangle(const vect3f *orig, const vect3f *dir, float *t0, const t_triangle triangle)
+{
+	vect3f edge1 = v_minus(triangle.c2,triangle.c1);
+	vect3f edge2 = v_minus(triangle.c3,triangle.c1);
+
+	vect3f h = v_cross(*dir,edge2);
+	float a = v_dot(edge1, h);
+	if (ft_fabs(a) > 0.001)
+	{
+		float f = 1./a;
+		vect3f s = v_minus(*orig, triangle.c1);
+		float u = f * v_dot(s, h);
+		if (u < 0.0 || u > 1.0)
+			return (0);
+		vect3f q = v_cross(s, edge1);
+		float v = f * v_dot(*dir, q);
+		if (v < 0.0 || u + v > 1.0)
+        	return (0);
+		*t0 = f * v_dot(edge2, q);
 		return (1);
 	}
 	return (0);
