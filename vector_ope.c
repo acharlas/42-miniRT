@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2019/12/03 18:41:49 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/12/04 15:14:19 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,13 +160,13 @@ bool	ray_intersect_sphere(const vect3f *orig, const vect3f *dir, float *t0, cons
 	return (1);
 }
 
-bool	ray_intersect_square(const vect3f *orig, const vect3f *dir, float *t0, const t_square square)
+bool	ray_intersect_plane(const vect3f *orig, const vect3f *dir, float *t0, const t_plane plane)
 {	
-	vect3f n = normalize(square.rot);
+	vect3f n = normalize(plane.rot);
 	float denom = v_dot(*dir, n);
 	if (ft_fabs(denom) > 0.001)
 	{
-		vect3f polo = v_minus(*orig, square.pos);
+		vect3f polo = v_minus(*orig, plane.pos);
 		*t0 = v_dot(polo, n) / denom;
 		vect3f pt = v_plus(*orig,v_mult(*dir,*t0));
 		if	(*t0 >= 0)
@@ -202,3 +202,28 @@ bool	ray_intersect_cylinder(const vect3f *orig, const vect3f *dir, float *t0, co
 }
 
 bool	ray_intersect_cone(const vect3f *orig, const vect3f *dir, float *t0, const t_cone cone)
+{
+	vect3f v = normalize(cone.rot);
+	float k = tan(((cone.a / 2) * M_PI) / 180);
+	vect3f x = v_minus(*orig, cone.pos);
+
+	float a = v_dot(*dir, *dir) - (1 + k * k) * powf(v_dot(*dir,v),2);
+	float b = 2 * (v_dot(*dir,x) - (1 + k * k) * v_dot(*dir, v) * v_dot(x,v));
+	float c = v_dot(x,x) - (1 + k * k) * powf(v_dot(x,v),2);
+	float delta = b * b - 4 * a * c;
+	if (delta < 0)
+		return (0);
+	float x1 = (-b + sqrtf(delta)) / (a * 2);
+	float x2 = (-b - sqrtf(delta)) / (a * 2);
+	if (x1 < x2 && x1 > 0)
+	{
+		*t0 = x1;
+		return (1);
+	}
+	else if (x2 < x1 && x2 > 0)
+	{
+		*t0 = x2;
+		return (1);
+	}
+	return (0);
+}

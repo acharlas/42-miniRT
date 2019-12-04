@@ -1,49 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   list_fct.c                                         :+:      :+:    :+:   */
+/*   ft_strcpm.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/11/23 10:35:00 by acharlas          #+#    #+#             */
-/*   Updated: 2019/12/04 15:17:55 by acharlas         ###   ########.fr       */
+/*   Created: 2019/10/08 15:11:58 by acharlas          #+#    #+#             */
+/*   Updated: 2019/12/04 15:40:35 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniRT.h"
 
-int	ft_lstsize(const t_list *lst)
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
-	int i;
-
-	i = 0;
-	while (lst)
+	while (n--)
 	{
-		lst = lst->next;
-		i++;
+		if (*s1 != *s2++)
+			return (*(unsigned char *)s1 - *(unsigned char *)(s2 - 1));
+		if (*s1++ == '\0')
+			break ;
 	}
-	return (i);
-}
-
-t_list	*ft_lstnew(void *content, char *c)
-{
-	t_list	*list;
-
-	if (!(list = malloc(sizeof(t_list))))
-		return (NULL);
-	list->data = content;
-	list->next = NULL;
-	list->name = c;
-	return (list);
-}
-
-void ft_lstadd_front(t_list **alst, t_list *new)
-{
-	if (!alst)
-		return ;
-	if (new)
-	{
-		new->next = *alst;
-		*alst = new;
-	}
+	return (0);
 }
