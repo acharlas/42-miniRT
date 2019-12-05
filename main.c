@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/12/04 18:52:23 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/12/05 18:22:48 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 			if(TRIANGLE->ray_intersect(orig, dir, &dist_i, *TRIANGLE) && dist_i < cylinder_dist && dist_i < square_dist && dist_i < spheres_dist && dist_i < cone_dist && dist_i < triangle_dist)
 			{
 				triangle_dist = dist_i;
-				*hit = v_plus(*orig, v_mult(*dir, dist_i));
-				*n = normalize(v_cross(v_minus(TRIANGLE->c2,TRIANGLE->c1), v_minus(TRIANGLE->c3,TRIANGLE->c1)));
+				*hit = v_plus(*orig, v_mult(*dir, -dist_i));
+				*n = c_vect3f(0,0,-1);//normalize(v_cross(v_minus(TRIANGLE->c2,TRIANGLE->c1), v_minus(TRIANGLE->c3,TRIANGLE->c1)));
 				*material = TRIANGLE->material;
 			}
 		}
@@ -193,6 +193,9 @@ int		main(void)
 	const int width = 1024;
 	const int height = 768;
 	void *mlx;
+	char *line;
+	char ***tab;
+	char **array;
 	t_list *objet = NULL;
 	t_list *listlight = NULL;
 	
@@ -200,22 +203,51 @@ int		main(void)
 	t_material redrubber = c_material(c_vect3f(0.3, 0.1, 0.1), c_vect4f(0.9, 0.1, 0.0, 0), 1.0, 10.);
 	t_material glass = c_material(c_vect3f(0.6, 0.7, 0.8), c_vect4f(0, 0.5, 0.1, 0.8), 1.5, 125.);
 	t_material mirroir = c_material(c_vect3f(1, 1, 1), c_vect4f(0, 10.0, 0.8, 0), 1.0, 1425.);
-	t_material plane = c_material(c_vect3f(0.3, 0.2, 0.1), c_vect4f(0.8, 0.25, 0.0, 0.0), 1.0, 10.);
+	t_material plane = c_material(c_vect3f(0.3, 0.2, 0.1), c_vect4f(0.8, 0.25, 0.0, 0.0), 1.0, 100.);
 	
 	
 
-	c_triangle(&objet, c_vect3f(5,0,-15),c_vect3f(-5,0,-15),c_vect3f(0,5,-15),plane);
+	//c_triangle(&objet, c_vect3f(5,0,-15),c_vect3f(-5,0,-15),c_vect3f(0,5,-15),glass);
 	//c_cylinder(&objet, c_vect3f(0, 0,-15), c_vect3f(0,1,0), plane, 1, 5);
 	//c_cone(&objet, c_vect3f(0,-10,-20), c_vect3f(0,1,0), plane, 30);
 	c_plane(&objet, c_vect3f(0, 10, 10), c_vect3f(0, 1, 0), plane);
-	//c_sphere(&objet, c_vect3f(-1, -1.5, -12), glass, 2);
-	//c_sphere(&objet, c_vect3f(1.5, -0.5, -18), redrubber, 3);
-	//c_sphere(&objet, c_vect3f(-3, 0, -16), ivoire, 2);
-	//c_sphere(&objet, c_vect3f(7, 5, -18), mirroir, 4);
+	c_sphere(&objet, c_vect3f(-1, -1.5, -12), glass, 2);
+	c_sphere(&objet, c_vect3f(1.5, -0.5, -18), redrubber, 3);
+	c_sphere(&objet, c_vect3f(-3, 0, -16), ivoire, 2);
+	c_sphere(&objet, c_vect3f(7, 5, -18), mirroir, 4);
 	c_light(&listlight, c_vect3f(-20, 20, 20), c_vect3f(1, 1, 1), 1.5);
 	c_light(&listlight, c_vect3f(30, 50, -25), c_vect3f(1, 1, 1), 1.8);
 	c_light(&listlight, c_vect3f(30, 20, 30), c_vect3f(1, 1, 1), 1.7);
-	
+	int fd = open("estrellica.obj", O_RDONLY);
+	int i = 0;
+	tab = malloc(sizeof(char ***) * 256);
+	while(get_next_line(fd,&line) && i != 256)
+	{
+		
+		tab[i] = ft_split(line, ' ');
+		i++;
+	}
+	i = 0;
+	float x = 7;
+	float y = 0;
+	float z = 0;
+	float div = 1;
+	while (get_next_line(fd,&line))
+	{
+		array = ft_split(line, ' ');
+		float a = atof(tab[atoi(array[1]) - 1][1]) / div;
+		float b = atof(tab[atoi(array[1]) - 1][2]) / div;
+		float c = atof(tab[atoi(array[1]) - 1][3]) / div;
+
+		float d = atof(tab[atoi(array[2]) - 1][1]) / div;
+		float e = atof(tab[atoi(array[2]) - 1][2]) / div;
+		float f = atof(tab[atoi(array[2]) - 1][3]) / div;
+
+		float g = atof(tab[atoi(array[3]) - 1][1]) / div;
+		float h = atof(tab[atoi(array[3]) - 1][2]) / div;
+		float i = atof(tab[atoi(array[3]) - 1][3]) / div;
+		c_triangle(&objet,c_vect3f(a - x,  b,  c - z) ,c_vect3f(d - x,e,f - z), c_vect3f(g - x,h,i - z), glass);
+	}
 	mlx = render(objet, listlight, width, height);
 	mlx_loop(mlx);
 }

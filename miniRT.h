@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2019/12/04 18:52:30 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/12/05 12:27:27 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # include <stdlib.h>
 # include <float.h>
 # include <stdbool.h>
+# include <fcntl.h>
+# include "get_next_line.h"
 #define SPHERE ((t_sphere *)(listobj)->data)
 #define PLANE ((t_plane *)(listobj)->data)
 #define CYLINDER ((t_cylinder *)(listobj)->data)
@@ -121,6 +123,8 @@ typedef struct s_light
 	float intensity;
 }				t_light;
 
+int	ft_isdigit(int c);
+unsigned int	ft_strlcpy(char *dest,const char *src, unsigned int size);
 vect3f	v_cross(vect3f a, vect3f b);
 vect3f		c_vect3f(float a, float b, float c);
 vect3f		normalize(vect3f this);
@@ -146,6 +150,8 @@ void	c_sphere(t_list **alst, vect3f pos, t_material material, float r);
 vect3f v_multv(vect3f a, vect3f b);
 vect3f	v_div(vect3f a, float b);
 vect3f	v_divv(vect3f a, vect3f b);
+int			ft_atoi(const char *str);
+char			**ft_split(char const *s, char c);
 int	ft_strncmp(const char *s1, const char *s2, size_t n);
 void	c_cone(t_list **alst, vect3f pos, vect3f rot ,t_material material, float angle);
 void	c_plane(t_list **alst, vect3f pos, vect3f rot ,t_material material);
