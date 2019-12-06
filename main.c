@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2019/12/05 18:22:48 by acharlas         ###   ########.fr       */
+/*   Updated: 2019/12/06 14:19:19 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,12 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 			if(TRIANGLE->ray_intersect(orig, dir, &dist_i, *TRIANGLE) && dist_i < cylinder_dist && dist_i < square_dist && dist_i < spheres_dist && dist_i < cone_dist && dist_i < triangle_dist)
 			{
 				triangle_dist = dist_i;
-				*hit = v_plus(*orig, v_mult(*dir, -dist_i));
+				*hit = v_plus(*orig, v_mult(*dir, dist_i));
 				*n = c_vect3f(0,0,-1);//normalize(v_cross(v_minus(TRIANGLE->c2,TRIANGLE->c1), v_minus(TRIANGLE->c3,TRIANGLE->c1)));
 				*material = TRIANGLE->material;
 			}
 		}
-		if (ft_strncmp(listobj->name, "cy", 2) == 0)
+		else if (ft_strncmp(listobj->name, "cy", 2) == 0)
 		{
 			if(CYLINDER->ray_intersect(orig, dir, &dist_i, *CYLINDER) && dist_i < cylinder_dist && dist_i < square_dist && dist_i < spheres_dist && dist_i < cone_dist && dist_i < triangle_dist)
 			{
@@ -66,7 +66,7 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 				*material = CYLINDER->material;
 			}
 		}
-		if(ft_strncmp(listobj->name, "pl", 2) == 0)
+		else if(ft_strncmp(listobj->name, "pl", 2) == 0)
 		{
 			if(PLANE->ray_intersect(orig, dir, &dist_i, *PLANE) && dist_i < cylinder_dist && dist_i < square_dist && dist_i < spheres_dist && dist_i < cone_dist && dist_i < triangle_dist)
 			{
@@ -76,7 +76,7 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 				*material = PLANE->material;
 			}
 		}
-		if(ft_strncmp(listobj->name, "sp", 2) == 0)
+		else if(ft_strncmp(listobj->name, "sp", 2) == 0)
 		{
 			if (SPHERE->ray_intersect(orig, dir, &dist_i, *SPHERE) && dist_i < cylinder_dist && dist_i < square_dist && dist_i < spheres_dist && dist_i < cone_dist && dist_i < triangle_dist)
 			{
@@ -86,7 +86,7 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 				*material = SPHERE->material;
 			}
 		}
-		if(ft_strncmp(listobj->name, "co", 2) == 0)
+		else if(ft_strncmp(listobj->name, "co", 2) == 0)
 		{
 			if (CONE->ray_intersect(orig, dir, &dist_i, *CONE) && dist_i < cylinder_dist && dist_i < square_dist && dist_i < spheres_dist && dist_i < cone_dist && dist_i < triangle_dist)
 			{
@@ -207,47 +207,49 @@ int		main(void)
 	
 	
 
-	//c_triangle(&objet, c_vect3f(5,0,-15),c_vect3f(-5,0,-15),c_vect3f(0,5,-15),glass);
+	//c_triangle(&objet, c_vect3f(5,0,-10),c_vect3f(-5,0,-10),c_vect3f(0,5,-10), plane);
 	//c_cylinder(&objet, c_vect3f(0, 0,-15), c_vect3f(0,1,0), plane, 1, 5);
 	//c_cone(&objet, c_vect3f(0,-10,-20), c_vect3f(0,1,0), plane, 30);
-	c_plane(&objet, c_vect3f(0, 10, 10), c_vect3f(0, 1, 0), plane);
-	c_sphere(&objet, c_vect3f(-1, -1.5, -12), glass, 2);
-	c_sphere(&objet, c_vect3f(1.5, -0.5, -18), redrubber, 3);
-	c_sphere(&objet, c_vect3f(-3, 0, -16), ivoire, 2);
-	c_sphere(&objet, c_vect3f(7, 5, -18), mirroir, 4);
+	//c_plane(&objet, c_vect3f(0, 10, 10), c_vect3f(0, 1, 0), plane);
+	c_sphere(&objet, c_vect3f(-1, 2.6, -12), redrubber, 1.2);
+	c_sphere(&objet, c_vect3f(1, 2.6, -12), redrubber, 1.2);
+	//c_sphere(&objet, c_vect3f(-3, 0, -16), ivoire, 2);
+	//c_sphere(&objet, c_vect3f(7, 5, -18), mirroir, 4);
 	c_light(&listlight, c_vect3f(-20, 20, 20), c_vect3f(1, 1, 1), 1.5);
 	c_light(&listlight, c_vect3f(30, 50, -25), c_vect3f(1, 1, 1), 1.8);
 	c_light(&listlight, c_vect3f(30, 20, 30), c_vect3f(1, 1, 1), 1.7);
-	int fd = open("estrellica.obj", O_RDONLY);
+	
+	
+	int fd = open("penis.obj", O_RDONLY);
 	int i = 0;
-	tab = malloc(sizeof(char ***) * 256);
-	while(get_next_line(fd,&line) && i != 256)
+	tab = malloc(sizeof(char ***) * 157);
+	while(get_next_line(fd,&line) && i != 157)
 	{
 		
 		tab[i] = ft_split(line, ' ');
 		i++;
 	}
 	i = 0;
-	float x = 7;
+	float x = 0;
 	float y = 0;
-	float z = 0;
-	float div = 1;
+	float z = 10;
+	float div = 1.;
 	while (get_next_line(fd,&line))
 	{
 		array = ft_split(line, ' ');
 		float a = atof(tab[atoi(array[1]) - 1][1]) / div;
 		float b = atof(tab[atoi(array[1]) - 1][2]) / div;
-		float c = atof(tab[atoi(array[1]) - 1][3]) / div;
-
+		float c = atof(tab[atoi(array[1]) - 1][3]) / div;	
 		float d = atof(tab[atoi(array[2]) - 1][1]) / div;
 		float e = atof(tab[atoi(array[2]) - 1][2]) / div;
-		float f = atof(tab[atoi(array[2]) - 1][3]) / div;
-
+		float f = atof(tab[atoi(array[2]) - 1][3]) / div;	
 		float g = atof(tab[atoi(array[3]) - 1][1]) / div;
 		float h = atof(tab[atoi(array[3]) - 1][2]) / div;
 		float i = atof(tab[atoi(array[3]) - 1][3]) / div;
-		c_triangle(&objet,c_vect3f(a - x,  b,  c - z) ,c_vect3f(d - x,e,f - z), c_vect3f(g - x,h,i - z), glass);
+		c_triangle(&objet,c_vect3f(a - x,  b,  c - z) ,c_vect3f(d - x,e,f - z), c_vect3f(g - x,h,i - z), plane);
 	}
+	free(tab);
+	
 	mlx = render(objet, listlight, width, height);
 	mlx_loop(mlx);
 }
