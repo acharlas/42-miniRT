@@ -90,7 +90,7 @@ void	c_triangle(t_list **alst, vect3f c1, vect3f c2, vect3f c3,t_material materi
 {
 	t_triangle *triangle;
 
-	triangle = malloc(sizeof(t_cone));
+	triangle = malloc(sizeof(t_triangle));
 	triangle->c1 = c1;
 	triangle->c2 = c2;
 	triangle->c3 = c3;

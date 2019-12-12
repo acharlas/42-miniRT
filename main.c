@@ -204,51 +204,53 @@ int		main(void)
 	t_material glass = c_material(c_vect3f(0.6, 0.7, 0.8), c_vect4f(0, 0.5, 0.1, 0.8), 1.5, 125.);
 	t_material mirroir = c_material(c_vect3f(1, 1, 1), c_vect4f(0, 10.0, 0.8, 0), 1.0, 1425.);
 	t_material plane = c_material(c_vect3f(0.3, 0.2, 0.1), c_vect4f(0.8, 0.25, 0.0, 0.0), 1.0, 100.);
-	
+	t_material blackrubber = c_material(c_vect3f(0.01,0.01,0.01), c_vect4f(0.9,0.1,0.0,0), 1.0, 10);
+	t_material fluo = c_material(c_vect3f(0.01,0.45,0.001), c_vect4f(0.9, 0.7,0.6,0), 1.0, 125.);
 	
 
 	//c_triangle(&objet, c_vect3f(5,0,-10),c_vect3f(-5,0,-10),c_vect3f(0,5,-10), plane);
-	//c_cylinder(&objet, c_vect3f(0, 0,-15), c_vect3f(0,1,0), plane, 1, 5);
-	//c_cone(&objet, c_vect3f(0,-10,-20), c_vect3f(0,1,0), plane, 30);
-	//c_plane(&objet, c_vect3f(0, 10, 10), c_vect3f(0, 1, 0), plane);
-	c_sphere(&objet, c_vect3f(-1, 2.6, -12), redrubber, 1.2);
-	c_sphere(&objet, c_vect3f(1, 2.6, -12), redrubber, 1.2);
-	//c_sphere(&objet, c_vect3f(-3, 0, -16), ivoire, 2);
-	//c_sphere(&objet, c_vect3f(7, 5, -18), mirroir, 4);
+	c_cylinder(&objet, c_vect3f(0, 0,-15), c_vect3f(0,1,1), plane, 1, 5);
+	// c_cone(&objet, c_vect3f(0, 5, -20), c_vect3f(1,1,0), fluo, 30);
+	c_plane(&objet, c_vect3f(0, -4, 0), c_vect3f(0, 1, 1), mirroir);
+	// c_sphere(&objet, c_vect3f(-1, 2.6, -12), redrubber, 1.2);
+	// c_sphere(&objet, c_vect3f(-3, 0, -16), ivoire, 2);
+	// c_sphere(&objet, c_vect3f(3, 0, -15), glass, 3);
+	// c_sphere(&objet, c_vect3f(3, 0, -15), blackrubber, 1);
+	// c_sphere(&objet, c_vect3f(7, 5, -18), mirroir, 4);
 	c_light(&listlight, c_vect3f(-20, 20, 20), c_vect3f(1, 1, 1), 1.5);
 	c_light(&listlight, c_vect3f(30, 50, -25), c_vect3f(1, 1, 1), 1.8);
 	c_light(&listlight, c_vect3f(30, 20, 30), c_vect3f(1, 1, 1), 1.7);
 	
 	
-	int fd = open("penis.obj", O_RDONLY);
-	int i = 0;
-	tab = malloc(sizeof(char ***) * 157);
-	while(get_next_line(fd,&line) && i != 157)
-	{
-		
-		tab[i] = ft_split(line, ' ');
-		i++;
-	}
-	i = 0;
-	float x = 0;
-	float y = 0;
-	float z = 10;
-	float div = 1.;
-	while (get_next_line(fd,&line))
-	{
-		array = ft_split(line, ' ');
-		float a = atof(tab[atoi(array[1]) - 1][1]) / div;
-		float b = atof(tab[atoi(array[1]) - 1][2]) / div;
-		float c = atof(tab[atoi(array[1]) - 1][3]) / div;	
-		float d = atof(tab[atoi(array[2]) - 1][1]) / div;
-		float e = atof(tab[atoi(array[2]) - 1][2]) / div;
-		float f = atof(tab[atoi(array[2]) - 1][3]) / div;	
-		float g = atof(tab[atoi(array[3]) - 1][1]) / div;
-		float h = atof(tab[atoi(array[3]) - 1][2]) / div;
-		float i = atof(tab[atoi(array[3]) - 1][3]) / div;
-		c_triangle(&objet,c_vect3f(a - x,  b,  c - z) ,c_vect3f(d - x,e,f - z), c_vect3f(g - x,h,i - z), plane);
-	}
-	free(tab);
+	// int fd = open("duck.obj", O_RDONLY);
+	// int i = 0;
+	// tab = malloc(sizeof(char ***) * 256);
+	// while(get_next_line(fd,&line) && i != 256)
+	// {
+	// 	
+	// 	tab[i] = ft_split(line, ' ');
+	// 	i++;
+	// }
+	// i = 0;
+	// float x = 0;
+	// float y = 0;
+	// float z = 10;
+	// float div = 1.;
+	// while (get_next_line(fd,&line))
+	// {
+	// 	array = ft_split(line, ' ');
+	// 	float a = atof(tab[atoi(array[1]) - 1][1]) / div;
+	// 	float b = atof(tab[atoi(array[1]) - 1][2]) / div;
+	// 	float c = atof(tab[atoi(array[1]) - 1][3]) / div;	
+	// 	float d = atof(tab[atoi(array[2]) - 1][1]) / div;
+	// 	float e = atof(tab[atoi(array[2]) - 1][2]) / div;
+	// 	float f = atof(tab[atoi(array[2]) - 1][3]) / div;	
+	// 	float g = atof(tab[atoi(array[3]) - 1][1]) / div;
+	// 	float h = atof(tab[atoi(array[3]) - 1][2]) / div;
+	// 	float i = atof(tab[atoi(array[3]) - 1][3]) / div;
+	// 	c_triangle(&objet,c_vect3f(a - x,  b,  c - z) ,c_vect3f(d - x,e,f - z), c_vect3f(g - x,h,i - z), plane);
+	// }
+	// free(tab);
 	
 	mlx = render(objet, listlight, width, height);
 	mlx_loop(mlx);

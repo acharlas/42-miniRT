@@ -164,14 +164,11 @@ bool	ray_intersect_plane(const vect3f *orig, const vect3f *dir, float *t0, const
 {	
 	vect3f n = normalize(plane.rot);
 	float denom = v_dot(*dir, n);
-	if (ft_fabs(denom) > 0.001)
-	{
-		vect3f polo = v_minus(*orig, plane.pos);
-		*t0 = v_dot(polo, n) / denom;
-		vect3f pt = v_plus(*orig,v_mult(*dir,*t0));
-		if	(*t0 >= 0)
-			return (1);
-	}
+	vect3f polo = v_minus(plane.pos, *orig);
+	*t0 = v_dot(polo, n) / denom;
+	vect3f pt = v_plus(*orig,v_mult(*dir,*t0));
+	if	(*t0 > 0)
+		return (1);
 	return (0);
 }
 
@@ -191,11 +188,29 @@ bool	ray_intersect_cylinder(const vect3f *orig, const vect3f *dir, float *t0, co
 	if (x1 < x2 && x1 > 0)
 	{
 		*t0 = x1;
+		float m = v_dot(*dir, normalize(cylinder.rot)) * *t0 + v_dot(v_minus(*orig, cylinder.pos),normalize(cylinder.rot));
+		if (m < 0 || m > cylinder.h)
+		{
+			*t0 = x2;
+			float m = v_dot(*dir, normalize(cylinder.rot)) * *t0 + v_dot(v_minus(*orig, cylinder.pos),normalize(cylinder.rot));
+			if (m < 0 || m > cylinder.h)
+				return (0);
+			return (1);
+		}
 		return (1);
 	}
 	else if (x2 < x1 && x2 > 0)
 	{
 		*t0 = x2;
+		float m = v_dot(*dir, normalize(cylinder.rot)) * *t0 + v_dot(v_minus(*orig, cylinder.pos),normalize(cylinder.rot));
+		if (m < 0 || m > cylinder.h)
+		{
+			*t0 = x1;
+			float m = v_dot(*dir, normalize(cylinder.rot)) * *t0 + v_dot(v_minus(*orig, cylinder.pos),normalize(cylinder.rot));
+			if (m < 0 || m > cylinder.h)
+				return (0);
+			return (1);
+		}
 		return (1);
 	}
 	return (0);
