@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2019/12/06 12:08:06 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/01/17 17:06:47 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,24 +245,20 @@ bool	ray_intersect_cone(const vect3f *orig, const vect3f *dir, float *t0, const 
 
 bool	ray_intersect_triangle(const vect3f *orig, const vect3f *dir, float *t0, const t_triangle triangle)
 {
-	vect3f edge1 = v_minus(triangle.c2,triangle.c1);
-	vect3f edge2 = v_minus(triangle.c3,triangle.c1);
+	vect3f edge1 = v_minus(triangle.c3,triangle.c1);
+	vect3f edge2 = v_minus(triangle.c2,triangle.c1);
 
-	vect3f h = v_cross(*dir,edge2);
-	float a = v_dot(edge1, h);
-	if (ft_fabs(a) > 0.001)
-	{
-		float f = 1./a;
-		vect3f s = v_minus(*orig, triangle.c1);
-		float u = f * v_dot(s, h);
-		if (u < 0.0 || u > 1.0)
-			return (0);
-		vect3f q = v_cross(s, edge1);
-		float v = f * v_dot(*dir, q);
-		if (v < 0.0 || u + v > 1.0)
-        	return (0);
-		*t0 = f * v_dot(edge2, q);
-		return (1);
-	}
-	return (0);
+	vect3f h = v_cross(*dir,edge1);
+	float a = v_dot(h, edge2);
+	float f = 1./a;
+	vect3f s = v_minus(*orig, triangle.c1);
+	float u = f * v_dot(s, h);
+	if (u < 0.0 || u > 1.0)
+		return (0);
+	vect3f q = v_cross(s, edge2);
+	float v = f * v_dot(*dir, q);
+	if (v < 0.0 || u + v > 1.0)
+    	return (0);
+	*t0 = -f * v_dot(edge1, q);
+	return (1);
 }

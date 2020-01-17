@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/16 17:21:55 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/01/17 18:53:23 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,7 @@ vect3f	refract(const vect3f *I, const vect3f *n, const float eta_t, const float 
 int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listobj, vect3f *hit, vect3f *n, t_material *material)
 {
 	float	dist_i;
-	float	m_cy;
-	float	m_co;
+	float	m;
 	float	k;
 	t_dist	t_dist;
 
@@ -50,7 +49,7 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 			{
 				t_dist.tr_dist = dist_i;
 				*hit = v_plus(*orig, v_mult(*dir, dist_i));
-				*n = normalize(v_cross(v_minus(TRIANGLE->c3,TRIANGLE->c1), v_minus(TRIANGLE->c2,TRIANGLE->c1)));
+				*n = normalize(v_cross(v_minus(TRIANGLE->c1, TRIANGLE->c2),v_minus(TRIANGLE->c1, TRIANGLE->c3)));
 				*material = TRIANGLE->material;
 			}
 		}
@@ -59,9 +58,9 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 			if(CYLINDER->ray_intersect(orig, dir, &dist_i, *CYLINDER) && calcule_dist(dist_i, t_dist))
 			{
 				t_dist.cy_dist = dist_i;
-				m_cy = v_dot(*dir, normalize(CYLINDER->rot)) * dist_i + v_dot(v_minus(*orig, CYLINDER->pos),normalize(CYLINDER->rot));
+				m = v_dot(*dir, normalize(CYLINDER->rot)) * dist_i + v_dot(v_minus(*orig, CYLINDER->pos),normalize(CYLINDER->rot));
 				*hit = v_plus(*orig, v_mult(*dir, dist_i));
-				*n = normalize((v_minus(v_minus(*hit,CYLINDER->pos), v_mult(normalize(CYLINDER->rot), m_cy))));
+				*n = normalize((v_minus(v_minus(*hit,CYLINDER->pos), v_mult(normalize(CYLINDER->rot), m))));
 				*material = CYLINDER->material;
 			}
 		}
@@ -77,7 +76,7 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 		}
 		else if(ft_strncmp(listobj->name, "sp", 2) == 0)
 		{
-			if (SPHERE->ray_intersect(orig, dir, &dist_i, *SPHERE) && dist_i < calcule_dist(dist_i, t_dist))
+			if (SPHERE->ray_intersect(orig, dir, &dist_i, *SPHERE) && calcule_dist(dist_i, t_dist))
 			{
 				t_dist.sp_dist = dist_i;
 				*hit = v_plus(*orig, v_mult(*dir, dist_i));
@@ -92,14 +91,14 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 				t_dist.co_dist = dist_i;
 				*hit = v_plus(*orig, v_mult(*dir, dist_i));
 				k = tan(((CONE->a / 2) * M_PI) / 180);
-				m_co = v_dot(*dir, normalize(CYLINDER->rot)) * dist_i + v_dot(v_minus(*orig, CYLINDER->pos),normalize(CYLINDER->rot));
-				*n = normalize((v_minus(v_minus(*hit,CYLINDER->pos), v_mult(v_mult(normalize(CYLINDER->rot), m_co), 1+k*k))));
+				m = v_dot(*dir, normalize(CYLINDER->rot)) * dist_i + v_dot(v_minus(*orig, CYLINDER->pos),normalize(CYLINDER->rot));
+				*n = normalize((v_minus(v_minus(*hit,CYLINDER->pos), v_mult(v_mult(normalize(CYLINDER->rot), m), 1+k*k))));
 				*material = CONE->material;
 			}
 		}
 		listobj = listobj->next;
 	}
-	return (minimumfloat(5 , t_dist.sp_dist, t_dist.pl_dist, t_dist.cy_dist, t_dist.co_dist, t_dist.tr_dist) < 1000);
+	return (minimumfloat(5 , t_dist.pl_dist, t_dist.sp_dist, t_dist.cy_dist, t_dist.co_dist, t_dist.tr_dist) < 1000);
 }
 
 vect3f	cast_ray(const vect3f orig, const vect3f dir, const t_list *listobj, const t_list *listlight, size_t depth)
@@ -120,7 +119,7 @@ vect3f	cast_ray(const vect3f orig, const vect3f dir, const t_list *listobj, cons
 	vect3f add_color = c_vect3f(0, 0, 0);
 	
 	if (depth > 4 || !scene_intersect(&orig, &dir, listobj, &point, &n, &material))
-		return (bg_color(126,192,238)); //color background
+		return (bg_color(130,231,255)); //color background
 	
 	refract_dir = normalize(refract(&dir, &n, material.refractive_index, 1.0));
 	refract_orig = v_dot(refract_dir, n) < 0 ? v_minus(point, v_mult(n, 0.001)) : v_plus(point, v_mult(n, 0.001));
@@ -197,20 +196,19 @@ int		main(void)
 	char **array;
 	t_list *objet = NULL;
 	t_list *listlight = NULL;
-	
 	t_material ivoire = c_material(c_vect3f(0.4, 0.4, 0.3), c_vect4f(0.6, 0.3, 0.1, 0), 1.0, 50.);
-	t_material redrubber = c_material(c_vect3f(0.3, 0.1, 0.1), c_vect4f(0.9, 0.1, 0.0, 0), 1.0, 10.);
-	t_material glass = c_material(c_vect3f(0.6, 0.7, 0.8), c_vect4f(0, 0.5, 0.1, 0.8), 1.5, 125.);
+	t_material redrubber = c_material(c_vect3f(1, 0.96, 0.0), c_vect4f(0.3, 0.0, 0.0, 0), 1.0, 10.);
+	t_material glass = c_material(c_vect3f(0.6, 0.9, 0.8), c_vect4f(0, 0.5, 0.1, 0.8), 1.5, 125.);
 	t_material mirroir = c_material(c_vect3f(1, 1, 1), c_vect4f(0, 10.0, 0.8, 0), 1.0, 1425.);
 	t_material plane = c_material(c_vect3f(0.3, 0.2, 0.1), c_vect4f(0.8, 0.25, 0.0, 0.0), 1.0, 100.);
 	t_material blackrubber = c_material(c_vect3f(0.01,0.01,0.01), c_vect4f(0.9,0.1,0.0,0), 1.0, 10);
 	t_material fluo = c_material(c_vect3f(0.01,0.45,0.001), c_vect4f(0.9, 0.7,0.6,0), 1.0, 125.);
 	
 
-	c_triangle(&objet, c_vect3f(5,0,-10),c_vect3f(-5,0,-10),c_vect3f(0,5,-15), plane);
-	// c_cylinder(&objet, c_vect3f(0, 0,-15), c_vect3f(0,1,1), plane, 1, 5);
-	// c_cone(&objet, c_vect3f(0, 5, -20), c_vect3f(3, 1, 0), plane, 30);
-	// c_plane(&objet, c_vect3f(0, -4, 0), c_vect3f(0, 1, 0), plane);
+	// c_triangle(&objet, c_vect3f(5,-4,-10),c_vect3f(-5,-4,-10),c_vect3f(0,-4,-15), plane);
+	// c_cylinder(&objet, c_vect3f(-5, 0,-15), c_vect3f(0,1,1), plane, 1, 5);
+	// c_cone(&objet, c_vect3f(-10, 5, -30), c_vect3f(1, 1, 0), plane, 30);
+	// c_plane(&objet, c_vect3f(0, -5, 0), c_vect3f(0, 1, 0), mirroir);
 	// c_sphere(&objet, c_vect3f(-1, 2.6, -12), redrubber, 1.2);
 	// c_sphere(&objet, c_vect3f(-3, 0, -16), ivoire, 2);
 	// c_sphere(&objet, c_vect3f(3, 0, -15), glass, 3);
@@ -219,35 +217,36 @@ int		main(void)
 	c_light(&listlight, c_vect3f(-20, 20, 20), c_vect3f(1, 1, 1), 1.5);
 	c_light(&listlight, c_vect3f(30, 50, -25), c_vect3f(1, 1, 1), 1.8);
 	c_light(&listlight, c_vect3f(30, 20, 30), c_vect3f(1, 1, 1), 1.7);
+		c_light(&listlight, c_vect3f(0, 0, 0), c_vect3f(1, 1, 1), 2.1);
 	
-	// int fd = open("duck.obj", O_RDONLY);
-	// int i = 0;
-	// tab = malloc(sizeof(char ***) * 256);
-	// while(get_next_line(fd,&line) && i != 256)
-	// {
-	// 	tab[i] = ft_split(line, ' ');
-	// 	i++;
-	// }
-	// i = 0;
-	// float x = 0;
-	// float y = 0;
-	// float z = 10;
-	// float div = 1.;
-	// while (get_next_line(fd, &line))
-	// {
-	// 	array = ft_split(line, ' ');
-	// 	float a = atof(tab[atoi(array[1]) - 1][1]) / div;
-	// 	float b = atof(tab[atoi(array[1]) - 1][2]) / div;
-	// 	float c = atof(tab[atoi(array[1]) - 1][3]) / div;
-	// 	float d = atof(tab[atoi(array[2]) - 1][1]) / div;
-	// 	float e = atof(tab[atoi(array[2]) - 1][2]) / div;
-	// 	float f = atof(tab[atoi(array[2]) - 1][3]) / div;
-	// 	float g = atof(tab[atoi(array[3]) - 1][1]) / div;
-	// 	float h = atof(tab[atoi(array[3]) - 1][2]) / div;
-	// 	float i = atof(tab[atoi(array[3]) - 1][3]) / div;
-	// 	c_triangle(&objet, c_vect3f(a - x,  b,  c - z), c_vect3f(d - x, e, f - z), c_vect3f(g - x, h, i - z), plane);
-	// }
-	// free(tab);
+	int fd = open("Deer.obj", O_RDONLY);
+	int i = 0;
+	tab = malloc(sizeof(char ***) * 832);
+	while(get_next_line(fd,&line) && i != 832)
+	{
+		tab[i] = ft_split(line, ' ');
+		i++;
+	}
+	i = 0;
+	float x = 0;
+	float y = 0;
+	float z = 10;
+	float div = 100.;
+	while (get_next_line(fd, &line))
+	{
+		array = ft_split(line, ' ');
+		float a = atof(tab[atoi(array[1]) - 1][1]) / div;
+		float b = atof(tab[atoi(array[1]) - 1][2]) / div;
+		float c = atof(tab[atoi(array[1]) - 1][3]) / div;
+		float d = atof(tab[atoi(array[2]) - 1][1]) / div;
+		float e = atof(tab[atoi(array[2]) - 1][2]) / div;
+		float f = atof(tab[atoi(array[2]) - 1][3]) / div;
+		float g = atof(tab[atoi(array[3]) - 1][1]) / div;
+		float h = atof(tab[atoi(array[3]) - 1][2]) / div;
+		float i = atof(tab[atoi(array[3]) - 1][3]) / div;
+		c_triangle(&objet, c_vect3f(a - x,  b - y,  c - z), c_vect3f(d - x, e - y, f - z), c_vect3f(g - x, h - y, i - z), plane);
+	}
+	free(tab);
 	
 	mlx = render(objet, listlight, width, height);
 	mlx_loop(mlx);
