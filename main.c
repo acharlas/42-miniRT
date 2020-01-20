@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/17 18:53:23 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/01/20 17:56:30 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,12 +172,14 @@ void	*render(t_list *listobj, t_list *listlight, const int width, const int heig
 		i[1] = 0;
 		while (i[1] < height)
 		{
-			float pitch = M_PI;
+			float pitch = 0;
 			float yaw =  0;
-			vue[2] = -1;
 			vue[0] = ((2 * (i[0] + 0.5) / width - 1) * tan(fov / 2) * width / height);
 			vue[1] = -(2 * (i[1] + 0.5) / height - 1) * tan(fov / 2);
-			mlx_pixel_put(mlx[0], mlx[1], i[0], i[1], c_color(framebuffer[i[0]][i[1]] = cast_ray(c_vect3f(0, 0, 0), normalize(c_vect3f(vue[0], vue[1], vue[2])), listobj, listlight, 0)));
+			vue[2] = -1;
+			//vue[0] = vue[0] * cos(pitch) + vue[2] * sin(pitch);
+			//vue[2] = vue[0] * cos(pitch) + vue[2] * sin(pitch);
+			mlx_pixel_put(mlx[0], mlx[1], i[0], i[1], c_color(framebuffer[i[0]][i[1]] = cast_ray(c_vect3f(0, 0, 0), normalize(c_vect3f(vue[0] - sin(pitch), vue[1] - cos(pitch), vue[2])), listobj, listlight, 0)));
 			i[1]++;
 		}
 		free(framebuffer[i[0]]);
@@ -186,16 +188,57 @@ void	*render(t_list *listobj, t_list *listlight, const int width, const int heig
 	return (mlx[0]);
 }
 
+void	add_objet(t_list **alst, char *str, t_material material)
+{
+	char ***tab;
+	char **array;
+	char *line;
+	int fd = open(str, O_RDONLY);
+	int i = 0;
+	tab = malloc(sizeof(char ***) * 256);
+	while(get_next_line(fd, &line) && i != 256)
+	{
+		tab[i] = ft_split(line, ' ');
+		i++;
+	}
+	i = 0;
+	float x = 0;
+	float y = 0;
+	float z = 0;
+	float div = 10.;
+	float alpha = 0;
+	while (get_next_line(fd, &line))
+	{
+		array = ft_split(line, ' ');
+		float a = atof(tab[atoi(array[1]) - 1][1]) / div ;
+		float b = atof(tab[atoi(array[1]) - 1][2]) / div ;
+		float c = atof(tab[atoi(array[1]) - 1][3]) / div ;
+		float d = atof(tab[atoi(array[2]) - 1][1]) / div ;
+		float e = atof(tab[atoi(array[2]) - 1][2]) / div ;
+		float f = atof(tab[atoi(array[2]) - 1][3]) / div ;
+		float g = atof(tab[atoi(array[3]) - 1][1]) / div ;
+		float h = atof(tab[atoi(array[3]) - 1][2]) / div ;
+		float i = atof(tab[atoi(array[3]) - 1][3]) / div ;
+		vect3f m = c_vect3f(a - x,  b - y,  c - z);
+		vect3f n = c_vect3f(d - x, e - y, f - z);
+		vect3f o = c_vect3f(g - x, h - y, i - z);
+		vect3f j = v_minus(v_mult(m, cos(alpha)), v_mult(o, sin(alpha)));
+		vect3f k = n; // v_minus(v_mult(n, cos(alpha)), v_mult(o, sin(alpha)));
+		vect3f l =  v_minus(v_mult(m, sin(alpha)), v_mult(o, cos(alpha));
+		c_triangle(&alst, j, k, l, material);
+	}
+	free(tab);
+}
+
 int		main(void)
 {
 	const int width = 1024;
 	const int height = 768;
 	void *mlx;
-	char *line;
-	char ***tab;
-	char **array;
+	
 	t_list *objet = NULL;
 	t_list *listlight = NULL;
+
 	t_material ivoire = c_material(c_vect3f(0.4, 0.4, 0.3), c_vect4f(0.6, 0.3, 0.1, 0), 1.0, 50.);
 	t_material redrubber = c_material(c_vect3f(1, 0.96, 0.0), c_vect4f(0.3, 0.0, 0.0, 0), 1.0, 10.);
 	t_material glass = c_material(c_vect3f(0.6, 0.9, 0.8), c_vect4f(0, 0.5, 0.1, 0.8), 1.5, 125.);
@@ -206,48 +249,20 @@ int		main(void)
 	
 
 	// c_triangle(&objet, c_vect3f(5,-4,-10),c_vect3f(-5,-4,-10),c_vect3f(0,-4,-15), plane);
-	// c_cylinder(&objet, c_vect3f(-5, 0,-15), c_vect3f(0,1,1), plane, 1, 5);
-	// c_cone(&objet, c_vect3f(-10, 5, -30), c_vect3f(1, 1, 0), plane, 30);
-	// c_plane(&objet, c_vect3f(0, -5, 0), c_vect3f(0, 1, 0), mirroir);
+	c_cylinder(&objet, c_vect3f(-5, 0,-15), c_vect3f(0,1,1), plane, 1, 5);
+	c_cone(&objet, c_vect3f(-10, 5, -30), c_vect3f(1, 1, 0), plane, 30);
+	c_plane(&objet, c_vect3f(0, -5, 0), c_vect3f(0, 1, 0), plane);
 	// c_sphere(&objet, c_vect3f(-1, 2.6, -12), redrubber, 1.2);
-	// c_sphere(&objet, c_vect3f(-3, 0, -16), ivoire, 2);
+	c_sphere(&objet, c_vect3f(-3, 0, -16), ivoire, 2);
 	// c_sphere(&objet, c_vect3f(3, 0, -15), glass, 3);
 	// c_sphere(&objet, c_vect3f(3, 0, -15), blackrubber, 1);
 	// c_sphere(&objet, c_vect3f(7, 5, -18), mirroir, 4);
 	c_light(&listlight, c_vect3f(-20, 20, 20), c_vect3f(1, 1, 1), 1.5);
 	c_light(&listlight, c_vect3f(30, 50, -25), c_vect3f(1, 1, 1), 1.8);
 	c_light(&listlight, c_vect3f(30, 20, 30), c_vect3f(1, 1, 1), 1.7);
-		c_light(&listlight, c_vect3f(0, 0, 0), c_vect3f(1, 1, 1), 2.1);
+	c_light(&listlight, c_vect3f(0, 0, 0), c_vect3f(1, 1, 1), 2.1);
 	
-	int fd = open("Deer.obj", O_RDONLY);
-	int i = 0;
-	tab = malloc(sizeof(char ***) * 832);
-	while(get_next_line(fd,&line) && i != 832)
-	{
-		tab[i] = ft_split(line, ' ');
-		i++;
-	}
-	i = 0;
-	float x = 0;
-	float y = 0;
-	float z = 10;
-	float div = 100.;
-	while (get_next_line(fd, &line))
-	{
-		array = ft_split(line, ' ');
-		float a = atof(tab[atoi(array[1]) - 1][1]) / div;
-		float b = atof(tab[atoi(array[1]) - 1][2]) / div;
-		float c = atof(tab[atoi(array[1]) - 1][3]) / div;
-		float d = atof(tab[atoi(array[2]) - 1][1]) / div;
-		float e = atof(tab[atoi(array[2]) - 1][2]) / div;
-		float f = atof(tab[atoi(array[2]) - 1][3]) / div;
-		float g = atof(tab[atoi(array[3]) - 1][1]) / div;
-		float h = atof(tab[atoi(array[3]) - 1][2]) / div;
-		float i = atof(tab[atoi(array[3]) - 1][3]) / div;
-		c_triangle(&objet, c_vect3f(a - x,  b - y,  c - z), c_vect3f(d - x, e - y, f - z), c_vect3f(g - x, h - y, i - z), plane);
-	}
-	free(tab);
-	
+	add_objet(objet, "duck.obj", redrubber);
 	mlx = render(objet, listlight, width, height);
 	mlx_loop(mlx);
 }

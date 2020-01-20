@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/16 17:00:56 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/01/20 11:03:01 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ typedef struct s_plane
 	vect3f		pos;
 	t_material	material;
 	vect3f		rot;
-	bool			(*ray_intersect)(const vect3f *, const vect3f *, float *, const struct s_plane);
+	bool		(*ray_intersect)(const vect3f *, const vect3f *, float *, const struct s_plane);
 }				t_plane;
 
 typedef struct s_cone
