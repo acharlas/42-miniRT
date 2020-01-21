@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/17 17:06:47 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/01/21 15:04:45 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,6 +250,8 @@ bool	ray_intersect_triangle(const vect3f *orig, const vect3f *dir, float *t0, co
 
 	vect3f h = v_cross(*dir,edge1);
 	float a = v_dot(h, edge2);
+	if (ft_fabs(a) > 0.001)
+	{
 	float f = 1./a;
 	vect3f s = v_minus(*orig, triangle.c1);
 	float u = f * v_dot(s, h);
@@ -261,4 +263,6 @@ bool	ray_intersect_triangle(const vect3f *orig, const vect3f *dir, float *t0, co
     	return (0);
 	*t0 = -f * v_dot(edge1, q);
 	return (1);
+	}
+	return (0);
 }

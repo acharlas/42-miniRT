@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/20 11:03:01 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/01/21 16:30:41 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,12 @@ typedef struct s_light
 	float intensity;
 }				t_light;
 
+vect3f			reflect(const vect3f *I, const vect3f *N);
+vect3f			refract(const vect3f *I, const vect3f *n, const float eta_t, const float eta_i);
+int				scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listobj, vect3f *hit, vect3f *n, t_material *material);
+vect3f			cast_ray(const vect3f orig, const vect3f dir, const t_list *listobj, const t_list *listlight, size_t depth);
+void			add_objet(t_list **alst, char *str, t_material material);
+void			*render(t_list *listobj, t_list *listlight, const int width, const int height);
 t_dist			init_dist(void);
 int				calcule_dist(float dist_i, t_dist t_dist);
 int				ft_isdigit(int c);
