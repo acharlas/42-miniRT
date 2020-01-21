@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/10 17:40:07 by acharlas          #+#    #+#             */
-/*   Updated: 2019/12/05 12:04:20 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/01/21 21:21:45 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define GET_NEXT_LINE_H
 # include <unistd.h>
 # include <stdlib.h>
-#define BUFFER_SIZE 32
+#define BUFFER_SIZE 4096
 char			*ft_strdup(const char *s);
 char			*ft_substr(const char *s, unsigned int start, size_t len);
 unsigned int	ft_strlen(const char *s);

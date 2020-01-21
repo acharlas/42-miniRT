@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:18:31 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/21 17:33:16 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/01/21 21:09:31 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ vect3f	cast_ray(const vect3f orig, const vect3f dir, const t_list *listobj, cons
 	
 	ray.depth = depth;
 	if (ray.depth > 4 || !scene_intersect(&orig, &dir, listobj, &ray.base.pt, &ray.base.n, &ray.base.material))
-		return (bg_color(130,231,255));
+		return (c_vect3f(0.78, 0.74, 0.76)); //bg_color(200,120,255));
 	c_ree_rea(&ray, &dir, listobj, listlight);
 	diffuse_light_intensity = 0;
 	specular_light_intensity = 0;

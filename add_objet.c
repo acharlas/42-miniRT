@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:19:09 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/21 16:19:30 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/01/21 21:27:15 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@ void	add_objet(t_list **alst, char *str, t_material material)
 	char *line;
 	int fd = open(str, O_RDONLY);
 	int i = 0;
+	float a;
+	float b;
+	float c;
 	tab = malloc(sizeof(char ***) * 8);
 	while(get_next_line(fd, &line) && i != 8)
 	{
@@ -34,18 +37,18 @@ void	add_objet(t_list **alst, char *str, t_material material)
 	while (get_next_line(fd, &line))
 	{
 		array = ft_split(line, ' ');
-		float a = atof(tab[atoi(array[1]) - 1][1]) / div ;
-		float b = atof(tab[atoi(array[1]) - 1][2]) / div ;
-		float c = atof(tab[atoi(array[1]) - 1][3]) / div ;
-		float d = atof(tab[atoi(array[2]) - 1][1]) / div ;
-		float e = atof(tab[atoi(array[2]) - 1][2]) / div ;
-		float f = atof(tab[atoi(array[2]) - 1][3]) / div ;
-		float g = atof(tab[atoi(array[3]) - 1][1]) / div ;
-		float h = atof(tab[atoi(array[3]) - 1][2]) / div ;
-		float i = atof(tab[atoi(array[3]) - 1][3]) / div ;
+		a = atof(tab[atoi(array[1]) - 1][1]) / div ;
+		b = atof(tab[atoi(array[1]) - 1][2]) / div ;
+		c = atof(tab[atoi(array[1]) - 1][3]) / div ;
 		vect3f m = c_vect3f(a - x,  b - y,  c - z);
-		vect3f n = c_vect3f(d - x, e - y, f - z);
-		vect3f o = c_vect3f(g - x, h - y, i - z);
+		a = atof(tab[atoi(array[2]) - 1][1]) / div ;
+		b = atof(tab[atoi(array[2]) - 1][2]) / div ;
+		c = atof(tab[atoi(array[2]) - 1][3]) / div ;
+		vect3f n = c_vect3f(a - x, b - y, c - z);
+		a = atof(tab[atoi(array[3]) - 1][1]) / div ;
+		b = atof(tab[atoi(array[3]) - 1][2]) / div ;
+		c = atof(tab[atoi(array[3]) - 1][3]) / div ;
+		vect3f o = c_vect3f(a - x, b - y, c - z);
 		c_triangle(alst, m, n, o, material);
 	}
 	free(tab);

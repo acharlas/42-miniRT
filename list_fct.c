@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:35:00 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/17 16:20:33 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/01/21 21:23:13 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,9 @@ float	minimumfloat(signed int i, ...)
 
 int	calcule_dist(float dist_i, t_dist t_dist)
 {
-	return (dist_i < t_dist.cy_dist && dist_i < t_dist.pl_dist && dist_i < t_dist.sp_dist && dist_i < t_dist.co_dist && dist_i < t_dist.tr_dist);
+	return (dist_i < t_dist.cy_dist && dist_i < 
+	t_dist.pl_dist && dist_i < t_dist.sp_dist && dist_i < 
+	t_dist.co_dist && dist_i < t_dist.tr_dist);
 }
 
 t_dist init_dist(void)
