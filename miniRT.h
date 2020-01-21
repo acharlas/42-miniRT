@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/21 16:30:41 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/01/21 17:25:51 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 #define CYLINDER ((t_cylinder *)(listobj)->data)
 #define CONE ((t_cone *)(listobj)->data)
 #define TRIANGLE ((t_triangle *)(listobj)->data)
+#define	LIGHT ((t_light *)(listlight->data))
 
 typedef	struct s_dist
 {
@@ -132,6 +133,49 @@ typedef struct s_light
 	vect3f color;
 	float intensity;
 }				t_light;
+
+typedef struct s_ree
+{
+	vect3f	dir;
+	vect3f	orig;
+	vect3f	color;
+
+}				t_ree;
+
+typedef struct s_rea
+{
+	vect3f	dir;
+	vect3f	orig;
+	vect3f	color;
+
+}				t_rea;
+
+typedef	struct s_sdw
+{
+	vect3f	orig;
+	vect3f	pt;
+	vect3f	n;
+}				t_sdw;
+
+
+typedef	struct s_base
+{
+	vect3f		color;
+	vect3f		pt;
+	vect3f		n;
+	vect3f		dir;
+	t_material	material;
+}				t_base;
+
+typedef struct	s_ray
+{
+	t_base	base;
+	t_rea	rea;
+	t_ree	ree;
+	t_sdw	sdw;
+	int		depth;
+}				t_ray;
+
 
 vect3f			reflect(const vect3f *I, const vect3f *N);
 vect3f			refract(const vect3f *I, const vect3f *n, const float eta_t, const float eta_i);

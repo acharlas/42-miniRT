@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/26 14:54:43 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/21 16:32:59 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/01/21 16:36:50 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,19 @@ void	c_cone(t_list **alst, vect3f pos, vect3f rot ,t_material material, float an
 	cone->a = angle;
 	cone->ray_intersect = ray_intersect_cone;
 	ft_lstadd_front(alst, ft_lstnew(cone, "co"));
+}
+
+void	c_sphere(t_list **alst, vect3f pos, t_material material, float r)
+{
+	t_sphere *sphere;
+
+	sphere = malloc(sizeof(t_sphere));
+	sphere->pos = pos;
+	sphere->r = r;
+	sphere->material = material;
+	sphere->material.specular_expo = material.specular_expo;
+	sphere->ray_intersect = ray_intersect_sphere;
+	ft_lstadd_front(alst, ft_lstnew(sphere, "sp"));
 }
 
 void	c_triangle(t_list **alst, vect3f c1, vect3f c2, vect3f c3,t_material material)
