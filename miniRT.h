@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/21 17:25:51 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/01/22 12:39:49 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,4 +225,7 @@ bool			ray_intersect_cylinder(const vect3f *orig, const vect3f *dir, float *t0, 
 bool			ray_intersect_cone(const vect3f *orig, const vect3f *dir, float *t0, const t_cone cone);
 bool			ray_intersect_triangle(const vect3f *orig, const vect3f *dir, float *t0, const t_triangle triangle);
 void			c_triangle(t_list **alst, vect3f c1, vect3f c2, vect3f c3,t_material material);
+void	ft_yaw(float angle, float **vue);
+void	ft_pitch(float angle, float **vue);
+void	ft_roll(float angle, float **vue);
 #endif

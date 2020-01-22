@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/21 21:20:50 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/01/22 13:35:35 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,13 @@ int		main(void)
 	t_material fluo = c_material(c_vect3f(0.01,0.45,0.001), c_vect4f(0.9, 0.7,0.6,0), 1.0, 125.);
 
 	// c_triangle(&objet, c_vect3f(5,-4,-10),c_vect3f(0,-4,-15),c_vect3f(-5,-4,-10), plane);
-	// c_cylinder(&objet, c_vect3f(0, 0,-15), c_vect3f(0,1,1), plane, 1, 5);
+	c_cylinder(&objet, c_vect3f(0, 0,-15), c_vect3f(0,1,0), plane, 1, 5);
 	// c_cone(&objet, c_vect3f(-10, 5, -30), c_vect3f(1, 1, 0), plane, 30);
 	// c_plane(&objet, c_vect3f(0, -5, 0), c_vect3f(0, 1, 0), plane);
-	c_sphere(&objet, c_vect3f(-1, 2.6, -12), redrubber, 1.2);
-	c_sphere(&objet, c_vect3f(0, 0, -16), ivoire, 2);
+	// c_sphere(&objet, c_vect3f(-1, 2.6, -12), redrubber, 1.2);
+	// c_sphere(&objet, c_vect3f(0, 0, -16), ivoire, 2);
 	// c_sphere(&objet, c_vect3f(3, 0, -15), glass, 3);
-	c_sphere(&objet, c_vect3f(3, 0, -15), blackrubber, 1);
+	// c_sphere(&objet, c_vect3f(3, 0, -15), blackrubber, 1);
 	// c_sphere(&objet, c_vect3f(7, 5, -18), mirroir, 4);
 	c_light(&listlight, c_vect3f(-20, 20, 20), c_vect3f(1, 1, 1), 1.5);
 	c_light(&listlight, c_vect3f(30, 50, -25), c_vect3f(1, 1, 1), 1.8);
