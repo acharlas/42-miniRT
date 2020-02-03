@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:16:37 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/21 16:17:47 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/01/23 17:22:34 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,5 +77,5 @@ int		scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listob
 		}
 		listobj = listobj->next;
 	}
-	return (minimumfloat(5 , t_dist.pl_dist, t_dist.sp_dist, t_dist.cy_dist, t_dist.co_dist, t_dist.tr_dist) < 1000);
+	return (minimumfloat(5 , t_dist.pl_dist, t_dist.sp_dist, t_dist.cy_dist, t_dist.co_dist, t_dist.tr_dist) < 100);
 }

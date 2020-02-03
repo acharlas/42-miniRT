@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/22 12:39:49 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/03 08:46:49 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ typedef struct s_triangle
 typedef struct s_camera
 {
 	vect3f	pos;
-	vect3f	cam_o;
+	vect3f	rot;
 	float	fov;
 }				t_camera;
 
@@ -174,7 +174,20 @@ typedef struct	s_ray
 	t_ree	ree;
 	t_sdw	sdw;
 	int		depth;
+	float	dli;
+	float	sli;
+	float	ld;
 }				t_ray;
+
+typedef struct s_rt
+{
+	t_camera	cam;
+	t_list		light;
+	t_list		obj;
+	int			*res;
+	int			antiA;
+	int			stereo;
+}               t_rt;
 
 
 vect3f			reflect(const vect3f *I, const vect3f *N);
