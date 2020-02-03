@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/03 08:46:49 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/03 15:59:10 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,21 +23,14 @@
 # include <stdbool.h>
 # include <fcntl.h>
 # include "get_next_line.h"
-#define SPHERE ((t_sphere *)(listobj)->data)
-#define PLANE ((t_plane *)(listobj)->data)
-#define CYLINDER ((t_cylinder *)(listobj)->data)
-#define CONE ((t_cone *)(listobj)->data)
-#define TRIANGLE ((t_triangle *)(listobj)->data)
-#define	LIGHT ((t_light *)(listlight->data))
-
-typedef	struct s_dist
-{
-	float	sp_dist;
-	float	pl_dist;
-	float	cy_dist;
-	float	co_dist;
-	float	tr_dist;
-}				t_dist;
+#define SPHERE ((t_sphere *)obj->data)
+#define PLANE ((t_plane *)obj->data)
+#define CYLINDER ((t_cylinder *)obj->data)
+#define CONE ((t_cone *)obj->data)
+#define TRIANGLE ((t_triangle *)obj->data)
+#define	LIGHT ((t_light *)(listlight->obj->data))
+#define Width 1024
+#define Height 768
 
 typedef	struct s_vect3f
 {
@@ -71,37 +64,28 @@ typedef	struct s_vect2f
 typedef struct s_sphere
 {
 	vect3f		pos;
-	t_material	material;
 	float		r;
-	bool		(*ray_intersect)(const vect3f *, const vect3f *, float *, const struct s_sphere);
-
 }				t_sphere;
 
 typedef struct s_plane
 {
 	vect3f		pos;
-	t_material	material;
 	vect3f		rot;
-	bool		(*ray_intersect)(const vect3f *, const vect3f *, float *, const struct s_plane);
 }				t_plane;
 
 typedef struct s_cone
 {
 	vect3f		pos;
 	vect3f		rot;
-	t_material	material;
 	float		a;
-	bool		(*ray_intersect)(const vect3f *, const vect3f *, float *, const struct s_cone);
 }				t_cone;
 
-typedef struct	s_cylinder
+typedef struct	s_cylindr
 {
 	vect3f		pos;
 	vect3f		rot;
 	float		r;
 	float		h;
-	t_material	material;
-	bool			(*ray_intersect)(const vect3f *, const vect3f *, float *, const struct s_cylinder);
 }				t_cylinder;
 
 typedef struct s_triangle
@@ -109,8 +93,6 @@ typedef struct s_triangle
 	vect3f		c1;
 	vect3f		c2;
 	vect3f		c3;
-	t_material	material;
-	bool		(*ray_intersect)(const vect3f *, const vect3f *, float *, const struct s_triangle);
 }				t_triangle;
 
 typedef struct s_camera
@@ -120,10 +102,17 @@ typedef struct s_camera
 	float	fov;
 }				t_camera;
 
-typedef  struct s_list
+
+typedef struct s_obj
 {
 	void	*data;
-	char	*name;
+	char	type;
+	t_material	material;
+}				t_obj;
+
+typedef  struct s_list
+{
+	t_obj	*obj;
 	struct s_list	*next;
 }				t_list;
 
@@ -134,49 +123,11 @@ typedef struct s_light
 	float intensity;
 }				t_light;
 
-typedef struct s_ree
-{
-	vect3f	dir;
-	vect3f	orig;
-	vect3f	color;
-
-}				t_ree;
-
-typedef struct s_rea
-{
-	vect3f	dir;
-	vect3f	orig;
-	vect3f	color;
-
-}				t_rea;
-
-typedef	struct s_sdw
-{
-	vect3f	orig;
-	vect3f	pt;
-	vect3f	n;
-}				t_sdw;
-
-
-typedef	struct s_base
-{
-	vect3f		color;
-	vect3f		pt;
-	vect3f		n;
-	vect3f		dir;
-	t_material	material;
-}				t_base;
-
 typedef struct	s_ray
 {
-	t_base	base;
-	t_rea	rea;
-	t_ree	ree;
-	t_sdw	sdw;
+	vect3f		orig;
+	vect3f		dir;
 	int		depth;
-	float	dli;
-	float	sli;
-	float	ld;
 }				t_ray;
 
 typedef struct s_rt
@@ -189,15 +140,21 @@ typedef struct s_rt
 	int			stereo;
 }               t_rt;
 
+typedef struct s_scene
+{
+	vect3f	hit;
+	vect3f	normal;
+	t_material material;
+}				t_scene;
 
-vect3f			reflect(const vect3f *I, const vect3f *N);
-vect3f			refract(const vect3f *I, const vect3f *n, const float eta_t, const float eta_i);
-int				scene_intersect(const vect3f *orig, const vect3f *dir, const t_list *listobj, vect3f *hit, vect3f *n, t_material *material);
-vect3f			cast_ray(const vect3f orig, const vect3f dir, const t_list *listobj, const t_list *listlight, size_t depth);
+;
+vect3f			reflect(const vect3f I, const vect3f n);
+vect3f			refract(const vect3f I, const vect3f n, const float eta_t, const float eta_i);
+t_scene			scene_intersect(t_ray ray, const t_list *listobj);
+vect3f			cast_ray(t_ray ray, const t_list *listobj, const t_list *listlight);
+vect3f			get_normal(t_ray ray, t_obj *obj, vect3f hit, float dist_i);
 void			add_objet(t_list **alst, char *str, t_material material);
-void			*render(t_list *listobj, t_list *listlight, const int width, const int height);
-t_dist			init_dist(void);
-int				calcule_dist(float dist_i, t_dist t_dist);
+void	render(t_list *listobj, t_list *listlight, void *mlx_ptr, void *mlx_win);
 int				ft_isdigit(int c);
 unsigned int	ft_strlcpy(char *dest,const char *src, unsigned int size);
 vect3f			v_cross(vect3f a, vect3f b);
@@ -215,7 +172,7 @@ float			maxf(float a, float b);
 float			minf(float a, float b);
 float			norm(vect3f a);
 float 			ft_fabs(float a);
-t_list			*ft_lstnew(void *content, char *c);
+t_list	*ft_lstnew(void *content, char c);
 void			ft_lstadd_front(t_list **alst, t_list *new);
 int				ft_lstsize(const t_list *lst);
 int				c_color(vect3f a);
@@ -232,11 +189,12 @@ int				ft_strncmp(const char *s1, const char *s2, size_t n);
 void			c_cone(t_list **alst, vect3f pos, vect3f rot ,t_material material, float angle);
 void			c_plane(t_list **alst, vect3f pos, vect3f rot ,t_material material);
 void			c_cylinder(t_list **alst, vect3f pos, vect3f rot ,t_material material, float r, float h);
-bool			ray_intersect_sphere(const vect3f *orig, const vect3f *dir, float *t0, const t_sphere sphere);
-bool			ray_intersect_plane(const vect3f *orig, const vect3f *dir, float *t0, const t_plane plane);
-bool			ray_intersect_cylinder(const vect3f *orig, const vect3f *dir, float *t0, const t_cylinder cylinder);
-bool			ray_intersect_cone(const vect3f *orig, const vect3f *dir, float *t0, const t_cone cone);
-bool			ray_intersect_triangle(const vect3f *orig, const vect3f *dir, float *t0, const t_triangle triangle);
+float			ray_intersect(t_ray ray, float *t0, t_obj *obj);
+float			ray_intersect_sphere(const vect3f orig, const vect3f dir, float *t0, const t_sphere sphere);
+float			ray_intersect_plane(const vect3f orig, const vect3f dir, float *t0, const t_plane plane);
+float			ray_intersect_cylinder(const vect3f orig, const vect3f dir, float *t0, const t_cylinder cylinder);
+float			ray_intersect_cone(const vect3f orig, const vect3f dir, float *t0, const t_cone cone);
+float			ray_intersect_triangle(const vect3f orig, const vect3f dir, float *t0, const t_triangle triangle);
 void			c_triangle(t_list **alst, vect3f c1, vect3f c2, vect3f c3,t_material material);
 void	ft_yaw(float angle, float **vue);
 void	ft_pitch(float angle, float **vue);

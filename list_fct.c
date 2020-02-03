@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:35:00 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/21 21:23:13 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/03 15:37:12 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,15 @@ int	ft_lstsize(const t_list *lst)
 	return (i);
 }
 
-t_list	*ft_lstnew(void *content, char *c)
+t_list	*ft_lstnew(void *content, char c)
 {
 	t_list	*list;
 
 	if (!(list = malloc(sizeof(t_list))))
 		return (NULL);
-	list->data = content;
+	list->obj = content;
 	list->next = NULL;
-	list->name = c;
+	list->obj->type = c;
 	return (list);
 }
 
@@ -65,23 +65,4 @@ float	minimumfloat(signed int i, ...)
 	}
 	va_end(ap);
 	return (a);
-}
-
-int	calcule_dist(float dist_i, t_dist t_dist)
-{
-	return (dist_i < t_dist.cy_dist && dist_i < 
-	t_dist.pl_dist && dist_i < t_dist.sp_dist && dist_i < 
-	t_dist.co_dist && dist_i < t_dist.tr_dist);
-}
-
-t_dist init_dist(void)
-{
-	t_dist out;
-
-	out.sp_dist = FLT_MAX;
-	out.co_dist = FLT_MAX;
-	out.cy_dist = FLT_MAX;
-	out.pl_dist = FLT_MAX;
-	out.tr_dist = FLT_MAX;
-	return (out);
 }

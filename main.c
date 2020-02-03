@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/03 08:34:50 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/03 15:54:04 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ int		main(void)
 {
 	const int width = 1024;
 	const int height = 768;
-	void *mlx;
+	void *mlx_ptr = mlx_init();
+	void *mlx_win = mlx_new_window(mlx_ptr, Width, Height, "miniRT");
 	
 	t_list *objet = NULL;
 	t_list *listlight = NULL;
@@ -39,12 +40,12 @@ int		main(void)
 	c_sphere(&objet, c_vect3f(3, 0, -15), blackrubber, 1);
 	// c_sphere(&objet, c_vect3f(7, 5, -18), mirroir, 4);
 	c_light(&listlight, c_vect3f(-20, 20, 20), c_vect3f(1, 1, 1), 1.5);
-	c_light(&listlight, c_vect3f(30, 50, -25), c_vect3f(1, 0, 1), 1.8);
-	c_light(&listlight, c_vect3f(30, 20, 30), c_vect3f(1, 0, 1), 0.8);
+	c_light(&listlight, c_vect3f(30, 50, -25), c_vect3f(1, 1, 1), 1.8);
+	c_light(&listlight, c_vect3f(30, 20, 30), c_vect3f(1, 1, 1), 0.8);
 	// c_light(&listlight, c_vect3f(0, 0, 0), c_vect3f(1, 1, 1), 2.1);
 
 
 	// add_objet(&objet, "cube.obj", redrubber);
-	mlx = render(objet, listlight, width, height);
-	mlx_loop(mlx);
+	render(objet, listlight, mlx_ptr, mlx_win);
+	mlx_loop(mlx_ptr);
 }

@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:32:12 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/21 16:35:30 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/03 15:56:25 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,15 @@
 void	c_light(t_list **alst, vect3f pos, vect3f color, float intensity)
 {
 	t_light *light;
+	t_obj	*obj;
 
+	obj = malloc(sizeof(t_obj));
 	light = malloc(sizeof(t_light));
 	light->pos = pos;
 	light->intensity = intensity;
 	light->color = color;
-	ft_lstadd_front(alst, ft_lstnew(light, "l"));
+	obj->data = light;
+	ft_lstadd_front(alst, ft_lstnew(obj, 'l'));
 }
 
 t_material 	c_material(vect3f color, vect4f albedo, float refrac_ind, float spec_expo)
