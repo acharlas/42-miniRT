@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:32:12 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/03 15:56:25 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/03 19:01:48 by raphael          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ void	c_light(t_list **alst, vect3f pos, vect3f color, float intensity)
 	light->intensity = intensity;
 	light->color = color;
 	obj->data = light;
-	ft_lstadd_front(alst, ft_lstnew(obj, 'l'));
+	obj->type = 'l';
+	ft_lstadd_front(alst, ft_lstnew(obj));
 }
 
 t_material 	c_material(vect3f color, vect4f albedo, float refrac_ind, float spec_expo)

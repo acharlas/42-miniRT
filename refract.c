@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:14:54 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/03 15:58:35 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/03 20:44:42 by raphael          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ vect3f	refract(const vect3f I, const vect3f n, const float eta_t, const float et
 	if (cosi < 0)
 	{
 		vect3f m = v_minus(c_vect3f(0,0,0), n);
-		return (refract(I, n, eta_i, eta_t));
+		return (refract(I, m, eta_i, eta_t));
 	}
 	float eta = (eta_i / eta_t);
 	float k = 1 - eta * eta * (1 - cosi * cosi);

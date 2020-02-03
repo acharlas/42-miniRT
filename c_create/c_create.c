@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/26 14:54:43 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/03 15:51:59 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/03 19:01:54 by raphael          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,5 +74,6 @@ void	c_sphere(t_list **alst, vect3f pos, t_material material, float r)
 	obj->data = sphere;
 	obj->material = material;
 	obj->material.specular_expo = material.specular_expo;
-	ft_lstadd_front(alst, ft_lstnew(obj, 's'));
+	obj->type = 's';
+	ft_lstadd_front(alst, ft_lstnew(obj));
 }

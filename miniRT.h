@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/03 15:59:10 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/03 19:44:32 by raphael          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,7 +172,7 @@ float			maxf(float a, float b);
 float			minf(float a, float b);
 float			norm(vect3f a);
 float 			ft_fabs(float a);
-t_list	*ft_lstnew(void *content, char c);
+t_list	*ft_lstnew(void *content);
 void			ft_lstadd_front(t_list **alst, t_list *new);
 int				ft_lstsize(const t_list *lst);
 int				c_color(vect3f a);
@@ -189,12 +189,12 @@ int				ft_strncmp(const char *s1, const char *s2, size_t n);
 void			c_cone(t_list **alst, vect3f pos, vect3f rot ,t_material material, float angle);
 void			c_plane(t_list **alst, vect3f pos, vect3f rot ,t_material material);
 void			c_cylinder(t_list **alst, vect3f pos, vect3f rot ,t_material material, float r, float h);
-float			ray_intersect(t_ray ray, float *t0, t_obj *obj);
-float			ray_intersect_sphere(const vect3f orig, const vect3f dir, float *t0, const t_sphere sphere);
-float			ray_intersect_plane(const vect3f orig, const vect3f dir, float *t0, const t_plane plane);
-float			ray_intersect_cylinder(const vect3f orig, const vect3f dir, float *t0, const t_cylinder cylinder);
-float			ray_intersect_cone(const vect3f orig, const vect3f dir, float *t0, const t_cone cone);
-float			ray_intersect_triangle(const vect3f orig, const vect3f dir, float *t0, const t_triangle triangle);
+float			ray_intersect(t_ray ray, t_obj *obj);
+float			ray_intersect_sphere(const vect3f orig, const vect3f dir, const t_sphere sphere);
+float			ray_intersect_plane(const vect3f orig, const vect3f dir, const t_plane plane);
+float			ray_intersect_cylinder(const vect3f orig, const vect3f dir, const t_cylinder cylinder);
+float			ray_intersect_cone(const vect3f orig, const vect3f dir, const t_cone cone);
+float			ray_intersect_triangle(const vect3f orig, const vect3f dir, const t_triangle triangle);
 void			c_triangle(t_list **alst, vect3f c1, vect3f c2, vect3f c3,t_material material);
 void	ft_yaw(float angle, float **vue);
 void	ft_pitch(float angle, float **vue);
