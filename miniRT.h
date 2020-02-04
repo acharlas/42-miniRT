@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/03 19:44:32 by raphael          ###   ########.fr       */
+/*   Updated: 2020/02/04 10:14:08 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ typedef struct s_scene
 vect3f			reflect(const vect3f I, const vect3f n);
 vect3f			refract(const vect3f I, const vect3f n, const float eta_t, const float eta_i);
 t_scene			scene_intersect(t_ray ray, const t_list *listobj);
-vect3f			cast_ray(t_ray ray, const t_list *listobj, const t_list *listlight);
+vect3f			cast_ray(t_ray ray, const t_list *listobj, const t_list *listlight, int depth);
 vect3f			get_normal(t_ray ray, t_obj *obj, vect3f hit, float dist_i);
 void			add_objet(t_list **alst, char *str, t_material material);
 void	render(t_list *listobj, t_list *listlight, void *mlx_ptr, void *mlx_win);

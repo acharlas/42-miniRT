@@ -6,31 +6,29 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:18:31 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 08:57:04 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/04 10:13:45 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniRT.h"
 #include <string.h>
 
-vect3f	reflected_color(t_ray *ray, const t_list *listobj, const t_list *listlight, t_scene scene)
+vect3f	reflected_color(t_ray *ray, const t_list *listobj, const t_list *listlight, t_scene scene, int depth)
 {
 	t_ray ree_ray;
 	ree_ray.dir = normalize(reflect(ray->dir, scene.normal));
-	ree_ray.orig = v_dot(ree_ray.dir, scene.normal) < 0 ? v_minus(scene.hit, v_mult(scene.normal, 0.001)) : \
-	v_plus(scene.hit, v_mult(scene.normal, 0.001));
-	ree_ray.depth = ++(ray->depth);
-	return 	(cast_ray(ree_ray, listobj, listlight));
+	ree_ray.orig = v_dot(ree_ray.dir, scene.normal) < 0 ? v_minus(scene.hit, v_mult(scene.normal, 0.001)) : v_plus(scene.hit, v_mult(scene.normal, 0.001));
+	//ree_ray.depth = ++(ray->depth);
+	return 	(cast_ray(ree_ray, listobj, listlight, depth + 1));
 }
 
-vect3f	refracted_color(t_ray *ray, const t_list *listobj, const t_list *listlight, t_scene scene)
+vect3f	refracted_color(t_ray *ray, const t_list *listobj, const t_list *listlight, t_scene scene, int depth)
 {
 	t_ray rea_ray;
 	rea_ray.dir = normalize(refract(ray->dir, scene.normal, scene.material.refractive_index, 1.0));
-	rea_ray.orig = v_dot(rea_ray.dir, scene.normal) < 0 ? v_minus(scene.hi, v_mult(scene.normal, 0.001)) :
-	v_plus(scene.hit, v_mult(scene.normal, 0.001));
-	rea_ray.depth = ++(ray->depth);
-	return 	(cast_ray(rea_ray, listobj, listlight));
+	rea_ray.orig = v_dot(rea_ray.dir, scene.normal) < 0 ? v_minus(scene.hit, v_mult(scene.normal, 0.001)) : v_plus(scene.hit, v_mult(scene.normal, 0.001));
+	//rea_ray.depth = ++(ray->depth);
+	return 	(cast_ray(rea_ray, listobj, listlight, depth + 1));
 }
 
 t_ray	shadow_ray(t_ray ray, t_scene scene)
@@ -40,7 +38,7 @@ t_ray	shadow_ray(t_ray ray, t_scene scene)
 	shadow_ray.orig = v_dot(ray.dir, scene.normal) < 0 ? v_minus(scene.hit, v_mult(scene.normal, 0.01)) : \
 	v_plus(scene.hit, v_mult(scene.normal, 0.01));
 	shadow_ray.dir = ray.dir;
-	shadow_ray.depth = 0;
+	//shadow_ray.depth = 0;
 	return (shadow_ray);
 }
 
@@ -60,7 +58,7 @@ vect3f	all_color_add(const t_list *listlight)
 	return (color);
 }
 
-vect3f	cast_ray(t_ray ray, const t_list *listobj, const t_list *listlight)
+vect3f	cast_ray(t_ray ray, const t_list *listobj, const t_list *listlight, int depth)
 {
 	vect3f	add_color;
 	float diffuse_light_intensity = 0;
@@ -75,9 +73,9 @@ vect3f	cast_ray(t_ray ray, const t_list *listobj, const t_list *listlight)
 	const vect3f			initial_dir = ray.dir;
 
 	scene = scene_intersect(ray, listobj);
-	if (ray.depth > 4 || (memcmp(&scene.hit, &tmp_vec, sizeof(vect3f)) == 0))
+	if (depth > 4 || (memcmp(&scene.hit, &tmp_vec, sizeof(vect3f)) == 0))
 		return (c_vect3f(0.62, 0.95, 0.99));
-	// add_color = all_color_add(listlight); // C moch
+	//add_color = all_color_add(listlight); // C moch
 	add_color = c_vect3f(1,1,1);
 	while (listlight)
 	{
@@ -87,13 +85,14 @@ vect3f	cast_ray(t_ray ray, const t_list *listobj, const t_list *listlight)
 		scene_shadow = scene_intersect(shadow, listobj);
 		if ((memcmp(&scene_shadow.hit, &tmp_vec, sizeof(vect3f)) == 0))
 		{
-			diffuse_light_intensity += LIGHT->intensity * maxf(0.f, v_dot(ray.dir, scene.normal));
-			specular_light_intensity += powf(maxf(0.f, v_dot(reflect(ray.dir, scene.normal), initial_dir)), scene.material.specular_expo) * LIGHT->intensity;
+			diffuse_light_intensity += LIGHT->intensity * maxf(0., v_dot(ray.dir, scene.normal));
+			specular_light_intensity += powf(maxf(0., v_dot(reflect(ray.dir, scene.normal), initial_dir)), scene.material.specular_expo) * LIGHT->intensity;
 		}
 		listlight = listlight->next;
 	}
-	//color = c_vect3f(0.62, 0.95, 0.99);
 	ray.dir = initial_dir;
-	color = v_plus(v_plus(v_plus(v_mult(scene.material.color, (diffuse_light_intensity * scene.material.albedo.i)), v_mult(add_color,(specular_light_intensity * scene.material.albedo.j))),v_mult(reflected_color(&ray, listobj, listlight, scene), scene.material.albedo.k)),v_mult(refracted_color(&ray, listobj, listlight, scene), scene.material.albedo.l));
+	refract_col = refracted_color(&ray, listobj, listlight, scene, depth);
+	reflect_col = reflected_color(&ray, listobj, listlight, scene, depth);
+	color = v_plus(v_plus(v_plus(v_mult(scene.material.color, (diffuse_light_intensity * scene.material.albedo.i)), v_mult(add_color,(specular_light_intensity * scene.material.albedo.j))),v_mult(reflect_col, scene.material.albedo.k)),v_mult(refract_col, scene.material.albedo.l));
 	return (color);
 }

@@ -6,11 +6,12 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 08:48:23 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/04 10:21:39 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniRT.h"
+#include "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers/X11/X.h"
 
 int		main(void)
 {
@@ -37,7 +38,7 @@ int		main(void)
 	c_sphere(&objet, c_vect3f(-1, 2.6, -12), redrubber, 1.2);
 	c_sphere(&objet, c_vect3f(0, 0, -16), ivoire, 2);
 	c_sphere(&objet, c_vect3f(3, 0, -15), glass, 3);
-	c_sphere(&objet, c_vect3f(3, 0, -15), blackrubber, 1);
+	//c_sphere(&objet, c_vect3f(3, 0, -15), blackrubber, 1);
 	c_sphere(&objet, c_vect3f(7, 5, -18), mirroir, 4);
 	c_light(&listlight, c_vect3f(-20, 20, 20), c_vect3f(1, 1, 1), 1.5);
 	c_light(&listlight, c_vect3f(30, 50, -25), c_vect3f(1, 1, 1), 1.8);

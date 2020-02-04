@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:16:37 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 08:29:54 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/04 09:51:18 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,3 @@ t_scene		scene_intersect(t_ray ray, const t_list *listobj)
 	}
 	return (out);
 }
-
