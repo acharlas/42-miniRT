@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:16:37 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/03 19:40:42 by raphael          ###   ########.fr       */
+/*   Updated: 2020/02/04 08:29:54 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,9 @@ t_scene		scene_intersect(t_ray ray, const t_list *listobj)
 		out.material.color = c_vect3f(0.62, 0.95, 0.99);
 		out.material.specular_expo = 0;
 		out.material.refractive_index = 0;
+		out.material.albedo = c_vect4f(0,0,0,0);
+		out.material.refractive_index = 0;
+		out.material.specular_expo = 0;
 	}
 	else
 	{
@@ -48,3 +51,4 @@ t_scene		scene_intersect(t_ray ray, const t_list *listobj)
 	}
 	return (out);
 }
+
