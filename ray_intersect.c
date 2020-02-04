@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 20:28:57 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 08:01:24 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/04 12:15:29 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ float	ray_intersect(t_ray ray, t_obj *obj)
 	else if (obj->type == 'k')
 		return (ray_intersect_cone(ray.orig, ray.dir, *CONE));
 	else
-		return (0.);
+		return (FLT_MAX);
 }
 
 float	ray_intersect_sphere(const vect3f orig, const vect3f dir, const t_sphere sphere)

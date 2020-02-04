@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 10:21:39 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/04 12:16:53 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,10 @@ int		main(void)
 	t_material blackrubber = c_material(c_vect3f(0.01,0.01,0.01), c_vect4f(0.9,0.1,0.0,0), 1.0, 10);
 	t_material fluo = c_material(c_vect3f(0.01,0.45,0.001), c_vect4f(0.9, 0.7,0.6,0), 1.0, 125.);
 
-	// c_triangle(&objet, c_vect3f(5,-4,-10),c_vect3f(0,-4,-15),c_vect3f(-5,-4,-10), plane);
-	// c_cylinder(&objet, c_vect3f(0, 0,-15), c_vect3f(0,1,0), plane, 1, 5);
-	// c_cone(&objet, c_vect3f(-10, 5, -30), c_vect3f(1, 1, 0), plane, 30);
-	// c_plane(&objet, c_vect3f(0, -5, 0), c_vect3f(0, 1, 0), plane);
+	//c_triangle(&objet, c_vect3f(5,-4,-10),c_vect3f(0,-4,-15),c_vect3f(-5,-4,-10), plane);
+	//c_cylinder(&objet, c_vect3f(0, 0,-15), c_vect3f(0,1,0), plane, 1, 5);
+	//c_cone(&objet, c_vect3f(-10, 5, -30), c_vect3f(1, 1, 0), plane, 30);
+	//c_plane(&objet, c_vect3f(0, -5, 0), c_vect3f(0, 1, 0), plane);
 	c_sphere(&objet, c_vect3f(-1, 2.6, -12), redrubber, 1.2);
 	c_sphere(&objet, c_vect3f(0, 0, -16), ivoire, 2);
 	c_sphere(&objet, c_vect3f(3, 0, -15), glass, 3);

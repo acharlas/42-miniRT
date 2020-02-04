@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:16:37 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 09:51:18 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/04 12:18:02 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ t_scene		scene_intersect(t_ray ray, const t_list *listobj)
 	t_obj	*closest = NULL;
 	float	temp_dist;
 	t_scene out;
-	bool	hit_obj = false;
 
 	while (listobj)
 	{
@@ -28,11 +27,10 @@ t_scene		scene_intersect(t_ray ray, const t_list *listobj)
 		{
 			dist_i = temp_dist;
 			closest = listobj->obj;
-			hit_obj = true;
 		}
 		listobj = listobj->next;
 	}
-	if (dist_i == FLT_MAX)
+	if (dist_i == FLT_MAX || closest == NULL)
 	{
 		out.hit = c_vect3f(0, 0, 0);
 		out.normal = c_vect3f(0, 0, 0);
