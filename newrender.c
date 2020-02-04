@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:20:04 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 17:12:22 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/04 18:55:12 by raphael          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,13 @@ void	render(t_list *listobj, t_list *listlight, void *mlx_ptr, void *mlx_win)
 		y = 0;
 		while (y < Height)
 		{
-			vue = _mm_setr_ps((x + 0.5) - Width / 2, - (y + 0.5) + Height / 2, - Height / (2. * tan(fov / 2.)), 0.01);
+			vue = _mm_setr_ps((x + 0.5) - Width / 2, - (y + 0.5) + Height / 2, - Height / (2. * tan(fov / 2.)), 0.);
 			t_ray ray = {_mm_setr_ps(0, 0, 0, 0), normalize(vue)};
 			color = color_to_int(cast_ray(ray, listobj, listlight, 0));
 			framebuffer[x + y * size / 4] = color;
+			//mlx_pixel_put(mlx_ptr, mlx_win, x, y, color);
 			y++;
+			//printf("x %d - y %d", x, y);
 		}
 		x++;
 	}
