@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 15:41:23 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/04 17:16:41 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,11 @@ vect4f	c_vect4f(float a, float b, float c, float d)
 
 __m128 normalize(__m128 v)
 {
-  __m128 inverse_norm = _mm_rsqrt_ps(_mm_dp_ps(v, v, 0x77));
+  __m128 inverse_norm = _mm_rsqrt_ps(_mm_dp_ps(v, v, 133));
   return (_mm_mul_ps(v, inverse_norm));
 }
 
 __m128	normalize_acc(__m128 v)
 {
-    return (_mm_div_ps(v, _mm_sqrt_ps(_mm_dp_ps(v, v, 0xff))));
+    return (_mm_div_ps(v, _mm_sqrt_ps(_mm_dp_ps(v, v, 133))));
 }
