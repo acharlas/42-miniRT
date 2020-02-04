@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:14:54 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 15:57:31 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/04 16:55:53 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,5 +22,5 @@ __m128	refract(const __m128 I, const __m128 n, const float eta_t, const float et
 	}
 	float eta = (eta_i / eta_t);
 	float k = 1 - eta * eta * (1 - cosi * cosi);
-	return k < 0 ? _mm_set_ps(1,0,0, 0) : v_plus(v_mult(I,eta), v_mult(n,eta*cosi -sqrtf(k)));
+	return k < 0 ? _mm_setr_ps(1,0,0, 0) : v_plus(v_mult(I,eta), v_mult(n,eta*cosi -sqrtf(k)));
 }

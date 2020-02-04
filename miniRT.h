@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 15:56:25 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/04 16:53:27 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <fcntl.h>
 # include "get_next_line.h"
 # include <immintrin.h>
+# define _mm_set_ps _mm_setr_ps
 #define SPHERE ((t_sphere *)obj->data)
 #define PLANE ((t_plane *)obj->data)
 #define CYLINDER ((t_cylinder *)obj->data)

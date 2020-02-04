@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:18:31 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 15:53:31 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/04 16:55:53 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,9 @@ __m128	cast_ray(t_ray ray, const t_list *listobj, const t_list *listlight, int d
 
 	scene = scene_intersect(ray, listobj);
 	if (depth > 4 || (memcmp(&scene.hit, &tmp_vec, sizeof(__m128)) == 0))
-		return (_mm_set_ps(0.62, 0.95, 0.99, 0.));
+		return (_mm_setr_ps(0.62, 0.95, 0.99, 0.));
 	//add_color = all_color_add(listlight); // C moch
-	add_color = _mm_set_ps(1, 1, 1, 0);
+	add_color = _mm_setr_ps(1, 1, 1, 0);
 	refract_col = refracted_color(&ray.dir, listobj, listlight, scene, depth);
 	reflect_col = reflected_color(&ray.dir, listobj, listlight, scene, depth);
 	while (listlight)
