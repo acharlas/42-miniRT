@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:16:37 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 12:18:02 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/04 13:45:34 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,7 @@ t_scene		scene_intersect(t_ray ray, const t_list *listobj)
 
 	while (listobj)
 	{
-		
-		temp_dist = ray_intersect(ray, listobj->obj);
-		if (temp_dist < dist_i)
+		if (((temp_dist = ray_intersect(ray, listobj->obj)) < dist_i))
 		{
 			dist_i = temp_dist;
 			closest = listobj->obj;
@@ -33,13 +31,7 @@ t_scene		scene_intersect(t_ray ray, const t_list *listobj)
 	if (dist_i == FLT_MAX || closest == NULL)
 	{
 		out.hit = c_vect3f(0, 0, 0);
-		out.normal = c_vect3f(0, 0, 0);
 		out.material.color = c_vect3f(0.62, 0.95, 0.99);
-		out.material.specular_expo = 0;
-		out.material.refractive_index = 0;
-		out.material.albedo = c_vect4f(0,0,0,0);
-		out.material.refractive_index = 0;
-		out.material.specular_expo = 0;
 	}
 	else
 	{

@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:18:31 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 13:32:43 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/04 13:53:37 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,17 +71,17 @@ vect3f	cast_ray(t_ray ray, const t_list *listobj, const t_list *listlight, int d
 	t_ray 			shadow;
 	vect3f			tmp_vec = c_vect3f(0,0,0);
 	const vect3f	initial_dir = ray.dir;
-	const t_list			*initial_listlight = listlight;
 
 	scene = scene_intersect(ray, listobj);
-	if (depth > 1 || (memcmp(&scene.hit, &tmp_vec, sizeof(vect3f)) == 0))
+	if (depth > 4 || (memcmp(&scene.hit, &tmp_vec, sizeof(vect3f)) == 0))
 		return (c_vect3f(0.62, 0.95, 0.99));
 	//add_color = all_color_add(listlight); // C moch
 	add_color = c_vect3f(1,1,1);
+	refract_col = refracted_color(&ray.dir, listobj, listlight, scene, depth);
+	reflect_col = reflected_color(&ray.dir, listobj, listlight, scene, depth);
 	while (listlight)
 	{
 		ray.dir = normalize(v_minus(LIGHT->pos, scene.hit));
-
 		shadow = make_shadow_ray(ray, scene);
 		scene_shadow = scene_intersect(shadow, listobj);
 		if ((memcmp(&scene_shadow.hit, &tmp_vec, sizeof(vect3f)) == 0))
@@ -92,8 +92,6 @@ vect3f	cast_ray(t_ray ray, const t_list *listobj, const t_list *listlight, int d
 		listlight = listlight->next;
 	}
 	ray.dir = initial_dir;
-	refract_col = refracted_color(&ray.dir, listobj, initial_listlight, scene, depth);
-	reflect_col = reflected_color(&ray.dir, listobj, initial_listlight, scene, depth);
 	color = v_plus(v_plus(v_plus(v_mult(scene.material.color, (diffuse_light_intensity * scene.material.albedo.i)), v_mult(add_color,(specular_light_intensity * scene.material.albedo.j))),v_mult(reflect_col, scene.material.albedo.k)),v_mult(refract_col, scene.material.albedo.l));
 	return (color);
 }

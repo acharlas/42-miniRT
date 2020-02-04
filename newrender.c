@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:20:04 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 11:28:54 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/04 13:40:54 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ void	render(t_list *listobj, t_list *listlight, void *mlx_ptr, void *mlx_win)
 			t_ray ray = {c_vect3f(0, 0, 0), normalize(c_vect3f(vue[0], vue[1], vue[2])), 0};
 			color = c_color(verif_color(cast_ray(ray, listobj, listlight, 0)));
 			framebuffer[x + y * size / 4] = color;
-			//mlx_pixel_put(mlx_ptr, mlx_win, x, y, color);
 			y++;
 		}
 		x++;

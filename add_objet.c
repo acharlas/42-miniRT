@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:19:09 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/21 21:27:15 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/04 13:48:44 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ void	add_objet(t_list **alst, char *str, t_material material)
 	float a;
 	float b;
 	float c;
-	tab = malloc(sizeof(char ***) * 8);
-	while(get_next_line(fd, &line) && i != 8)
+	tab = malloc(sizeof(char ***) * 256);
+	while(get_next_line(fd, &line) && i != 256)
 	{
 		tab[i] = ft_split(line, ' ');
 		i++;

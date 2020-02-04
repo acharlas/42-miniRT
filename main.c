@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 12:16:53 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/04 13:52:26 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,15 +38,13 @@ int		main(void)
 	c_sphere(&objet, c_vect3f(-1, 2.6, -12), redrubber, 1.2);
 	c_sphere(&objet, c_vect3f(0, 0, -16), ivoire, 2);
 	c_sphere(&objet, c_vect3f(3, 0, -15), glass, 3);
-	//c_sphere(&objet, c_vect3f(3, 0, -15), blackrubber, 1);
-	c_sphere(&objet, c_vect3f(7, 5, -18), mirroir, 4);
+	c_sphere(&objet, c_vect3f(3, 0, -15), blackrubber, 1);
+	//c_sphere(&objet, c_vect3f(7, 5, -18), mirroir, 4);
 	c_light(&listlight, c_vect3f(-20, 20, 20), c_vect3f(1, 1, 1), 1.5);
 	c_light(&listlight, c_vect3f(30, 50, -25), c_vect3f(1, 1, 1), 1.8);
 	c_light(&listlight, c_vect3f(30, 20, 30), c_vect3f(1, 1, 1), 0.8);
 	// c_light(&listlight, c_vect3f(0, 0, 0), c_vect3f(1, 1, 1), 2.1);
-
-
-	// add_objet(&objet, "cube.obj", redrubber);
+	//add_objet(&objet, "objet/duck.obj", redrubber);
 	render(objet, listlight, mlx_ptr, mlx_win);
 	mlx_loop(mlx_ptr);
 }
