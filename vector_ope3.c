@@ -6,38 +6,16 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 20:37:02 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/21 20:37:20 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/04 15:54:54 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniRT.h"
 
-vect3f	v_div(vect3f a, float b)
+__m128	v_cross(__m128 a, __m128 b)
 {
-	vect3f out;
-
-	out.x = a.x / b;
-	out.y = a.y / b;
-	out.z = a.z / b;
-	return (out);
-}
-
-vect3f	v_divv(vect3f a, vect3f b)
-{
-	vect3f out;
-
-	out.x = a.x / b.x;
-	out.y = a.y / b.y;
-	out.z = a.z / b.z;
-	return (out);
-}
-
-vect3f	v_cross(vect3f a, vect3f b)
-{
-	vect3f c;
-
-	c.x = a.y*b.z - a.z*b.y; 
-	c.y = a.z*b.x - a.x*b.z; 
-	c.z = a.x*b.y - a.y*b.x;
-	return (c);
+  __m128 a_yzx = _mm_shuffle_ps(a, a, _MM_SHUFFLE(3, 0, 2, 1));
+  __m128 b_yzx = _mm_shuffle_ps(b, b, _MM_SHUFFLE(3, 0, 2, 1));
+  __m128 c = _mm_sub_ps(_mm_mul_ps(a, b_yzx), _mm_mul_ps(a_yzx, b));
+  return (_mm_shuffle_ps(c, c, _MM_SHUFFLE(3, 0, 2, 1)));
 }

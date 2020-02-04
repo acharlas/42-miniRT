@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 20:28:57 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 12:15:29 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/04 15:46:28 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ float	ray_intersect(t_ray ray, t_obj *obj)
 		return (FLT_MAX);
 }
 
-float	ray_intersect_sphere(const vect3f orig, const vect3f dir, const t_sphere sphere)
+float	ray_intersect_sphere(const __m128 orig, const __m128 dir, const t_sphere sphere)
 {
-	vect3f	l;
+	__m128	l;
 	float	tca;
 	float	d2;
 	float	thc;
@@ -54,24 +54,24 @@ float	ray_intersect_sphere(const vect3f orig, const vect3f dir, const t_sphere s
 	return (t0);
 }
 
-float	ray_intersect_plane(const vect3f orig, const vect3f dir, const t_plane plane)
+float	ray_intersect_plane(const __m128 orig, const __m128 dir, const t_plane plane)
 {	
-	vect3f n = normalize(plane.rot);
+	__m128 n = normalize(plane.rot);
 	float denom = v_dot(dir, n);
-	vect3f polo = v_minus(plane.pos, orig);
+	__m128 polo = v_minus(plane.pos, orig);
 	float t0;
 
 	t0 = v_dot(polo, n) / denom;
-	vect3f pt = v_plus(orig,v_mult(dir, t0));
+	__m128 pt = v_plus(orig,v_mult(dir, t0));
 	if	(t0 > 0)
 		return (t0);
 	return (FLT_MAX);
 }
 
-float	ray_intersect_cylinder(const vect3f orig, const vect3f dir, const t_cylinder cylinder)
+float	ray_intersect_cylinder(const __m128 orig, const __m128 dir, const t_cylinder cylinder)
 {
-	vect3f v = normalize(cylinder.rot);
-	vect3f x = v_minus(orig, cylinder.pos);
+	__m128 v = normalize(cylinder.rot);
+	__m128 x = v_minus(orig, cylinder.pos);
 	float a = v_dot(dir, dir) - powf(v_dot(dir, v), 2);
 	float b = 2 * (v_dot(dir, x) - (v_dot(dir,v) * v_dot(x,v)));
 	float c = v_dot(x,x) - powf(v_dot(x,v), 2) - powf(cylinder.r, 2);
@@ -113,11 +113,11 @@ float	ray_intersect_cylinder(const vect3f orig, const vect3f dir, const t_cylind
 	return (FLT_MAX);
 }
 
-float	ray_intersect_cone(const vect3f orig, const vect3f dir, const t_cone cone)
+float	ray_intersect_cone(const __m128 orig, const __m128 dir, const t_cone cone)
 {
-	vect3f v = normalize(cone.rot);
+	__m128 v = normalize(cone.rot);
 	float k = tan(((cone.a / 2) * M_PI) / 180);
-	vect3f x = v_minus(orig, cone.pos);
+	__m128 x = v_minus(orig, cone.pos);
 	float t0;
 
 	float a = v_dot(dir, dir) - (1 + k * k) * powf(v_dot(dir,v),2);
@@ -141,22 +141,22 @@ float	ray_intersect_cone(const vect3f orig, const vect3f dir, const t_cone cone)
 	return (FLT_MAX);
 }
 
-float	ray_intersect_triangle(const vect3f orig, const vect3f dir, const t_triangle triangle)
+float	ray_intersect_triangle(const __m128 orig, const __m128 dir, const t_triangle triangle)
 {
-	vect3f edge1 = v_minus(triangle.c3,triangle.c1);
-	vect3f edge2 = v_minus(triangle.c2,triangle.c1);
-	vect3f h = v_cross(dir,edge1);
+	__m128 edge1 = v_minus(triangle.c3,triangle.c1);
+	__m128 edge2 = v_minus(triangle.c2,triangle.c1);
+	__m128 h = v_cross(dir,edge1);
 	float a = v_dot(h, edge2);
 	float t0;
 
 	if (ft_fabs(a) > 0.001)
 	{
 	float f = 1./a;
-	vect3f s = v_minus(orig, triangle.c1);
+	__m128 s = v_minus(orig, triangle.c1);
 	float u = f * v_dot(s, h);
 	if (u < 0.0 || u > 1.0)
 		return (FLT_MAX);
-	vect3f q = v_cross(s, edge2);
+	__m128 q = v_cross(s, edge2);
 	float v = f * v_dot(dir, q);
 	if (v < 0.0 || u + v > 1.0)
     	return (FLT_MAX);

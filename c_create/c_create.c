@@ -6,13 +6,13 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/26 14:54:43 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 11:51:12 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/04 15:57:57 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../miniRT.h"
 
-void	c_cylinder(t_list **alst, vect3f pos, vect3f rot ,t_material material, float r, float h)
+void	c_cylinder(t_list **alst, __m128 pos, __m128 rot ,t_material material, float r, float h)
 {
 	t_cylinder *cylinder;
 	t_obj	*obj;
@@ -29,7 +29,7 @@ void	c_cylinder(t_list **alst, vect3f pos, vect3f rot ,t_material material, floa
 	ft_lstadd_front(alst, ft_lstnew(obj));
 }
 
-void	c_plane(t_list **alst, vect3f pos, vect3f rot ,t_material material)
+void	c_plane(t_list **alst, __m128 pos, __m128 rot ,t_material material)
 {
 	t_plane *plane;
 	t_obj	*obj;
@@ -44,7 +44,7 @@ void	c_plane(t_list **alst, vect3f pos, vect3f rot ,t_material material)
 	ft_lstadd_front(alst, ft_lstnew(obj));
 }
 
-void	c_cone(t_list **alst, vect3f pos, vect3f rot ,t_material material, float angle)
+void	c_cone(t_list **alst, __m128 pos, __m128 rot ,t_material material, float angle)
 {
 	t_cone *cone;
 	t_obj	*obj;
@@ -62,7 +62,7 @@ void	c_cone(t_list **alst, vect3f pos, vect3f rot ,t_material material, float an
 }
 
 
-void	c_triangle(t_list **alst, vect3f c1, vect3f c2, vect3f c3,t_material material)
+void	c_triangle(t_list **alst, __m128 c1, __m128 c2, __m128 c3,t_material material)
 {
 	t_triangle *triangle;
 	t_obj	*obj;
@@ -78,7 +78,7 @@ void	c_triangle(t_list **alst, vect3f c1, vect3f c2, vect3f c3,t_material materi
 	ft_lstadd_front(alst, ft_lstnew(obj));
 }
 
-void	c_sphere(t_list **alst, vect3f pos, t_material material, float r)
+void	c_sphere(t_list **alst, __m128 pos, t_material material, float r)
 {
 	t_sphere *sphere;
 	t_obj	*obj;

@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:16:37 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 13:45:34 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/04 15:47:16 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ t_scene		scene_intersect(t_ray ray, const t_list *listobj)
 	}
 	if (dist_i == FLT_MAX || closest == NULL)
 	{
-		out.hit = c_vect3f(0, 0, 0);
-		out.material.color = c_vect3f(0.62, 0.95, 0.99);
+		out.hit = _mm_setzero_ps();
+		out.material.color = _mm_set_ps(0.62, 0.95, 0.99, 0.);
 	}
 	else
 	{

@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 11:19:13 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/21 20:46:52 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/04 15:40:52 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,33 +34,19 @@ float minf(float a, float b)
 }
 
 
-int	c_color(vect3f a)
+unsigned int	color_to_int(__m128 v)
 {
-	int color;
-	color = (int)(255 * a.x) << 16;
-	color |= (int)(255 * a.y) << 8;
-	color |= (int)(255 * a.z);
-	return (color);
-}
-
-vect3f	bg_color(float a, float b, float c)
-{
-	return (c_vect3f(a/255, b/255, c/255));
-}
-
-vect3f	verif_color(vect3f color)
-{
-	if (color.x > 1)
-		color.x = 1;
-	if (color.y > 1)
-		color.y = 1;
-	if (color.z > 1)
-		color.z = 1;
-	if (color.x < 0)
-		color.x = 0.001;
-	if (color.y < 0)
-		color.y = 0.001;
-	if (color.z < 0)
-		color.z = 0.001;
+	float tmp[4];
+	_mm_storeu_ps(tmp, v);
+	unsigned int color;
+	if (tmp[0] > 1)
+		tmp[0] = 1;
+	if (tmp[1] > 1)
+		tmp[1] = 1;
+	if (tmp[2] > 1)
+		tmp[2] = 1;
+	color = (int)(255 * tmp[0]) << 16;
+	color |= (int)(255 * tmp[1]) << 8;
+	color |= (int)(255 * tmp[2]);
 	return (color);
 }

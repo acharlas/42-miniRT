@@ -6,53 +6,35 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 20:35:50 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/21 20:36:24 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/04 15:54:44 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniRT.h"
 
-float v_dot(vect3f a, vect3f b)
+float v_dot(__m128 a, __m128 b)
 {
-	return(a.x * b.x + a.y * b.y + a.z * b.z);
+	float	out[4];
+		_mm_storeu_ps(out, _mm_dp_ps(a, b, 113));
+	return (out[0]);
 }
 
-vect3f	v_mult(vect3f a, float b)
+__m128	v_mult(__m128 v, float f)
 {
-	vect3f	c;
-
-	c.x = a.x * b;
-	c.y = a.y * b;
-	c.z = a.z * b;
-	return (c);
+	return (_mm_mul_ps(v, _mm_set1_ps(f)));
 }
 
-vect3f	v_plus(vect3f a, vect3f b)
+__m128	v_plus(__m128 a, __m128 b)
 {
-	vect3f	c;
-
-	c.x = a.x + b.x;
-	c.y = a.y + b.y;
-	c.z = a.z + b.z;
-	return (c);
+	return (_mm_sub_ps(a, b));
 }
 
-vect3f v_minus(vect3f a, vect3f b)
+__m128 v_minus(__m128 a, __m128 b)
 {
-	vect3f	c;
-
-	c.x = a.x - b.x;
-	c.y = a.y - b.y;
-	c.z = a.z - b.z;
-	return (c);
+	return (_mm_add_ps(a, b));
 }
 
-vect3f v_multv(vect3f a, vect3f b)
+__m128 v_multv(__m128 a, __m128 b)
 {
-	vect3f out;
-
-	out.x = a.x * b.x;
-	out.y = a.y * b.y;
-	out.z = a.z * b.z;
-	return (out);
+	return (_mm_mul_ps(a, b));
 }

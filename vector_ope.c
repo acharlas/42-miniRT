@@ -6,30 +6,11 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 10:10:46 by acharlas          #+#    #+#             */
-/*   Updated: 2020/01/21 20:37:25 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/04 15:41:23 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniRT.h"
-
-vect2f	c_vect2f(float a, float b)
-{
-	vect2f	out;
-	
-	out.a = a;
-	out.b = b;
-	return (out);
-}
-
-vect3f	c_vect3f(float a, float b, float c)
-{
-	vect3f	out;
-	
-	out.x = a;
-	out.y = b;
-	out.z = c;
-	return (out);
-}
 
 vect4f	c_vect4f(float a, float b, float c, float d)
 {
@@ -42,20 +23,13 @@ vect4f	c_vect4f(float a, float b, float c, float d)
 	return (out);
 }
 
-float	norm(vect3f a)
+__m128 normalize(__m128 v)
 {
-	float out;
-
-	out = sqrtf(a.x * a.x + a.y * a.y + a.z * a.z);
-	return (out);
+  __m128 inverse_norm = _mm_rsqrt_ps(_mm_dp_ps(v, v, 0x77));
+  return (_mm_mul_ps(v, inverse_norm));
 }
 
-vect3f	normalize(vect3f this)
+__m128	normalize_acc(__m128 v)
 {
-	vect3f	out;
-	
-	out.x = this.x / sqrtf(pow(this.x,2) + pow(this.y,2) + pow(this.z,2));
-	out.y = this.y / sqrtf(pow(this.x,2) + pow(this.y,2) + pow(this.z,2));
-	out.z = this.z / sqrtf(pow(this.x,2) + pow(this.y,2) + pow(this.z,2));
-	return (out);
+    return (_mm_div_ps(v, _mm_sqrt_ps(_mm_dp_ps(v, v, 0xff))));
 }

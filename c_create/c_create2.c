@@ -6,13 +6,13 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:32:12 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/03 19:01:48 by raphael          ###   ########.fr       */
+/*   Updated: 2020/02/04 15:58:31 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../miniRT.h"
 
-void	c_light(t_list **alst, vect3f pos, vect3f color, float intensity)
+void	c_light(t_list **alst, __m128 pos, __m128 color, float intensity)
 {
 	t_light *light;
 	t_obj	*obj;
@@ -27,7 +27,7 @@ void	c_light(t_list **alst, vect3f pos, vect3f color, float intensity)
 	ft_lstadd_front(alst, ft_lstnew(obj));
 }
 
-t_material 	c_material(vect3f color, vect4f albedo, float refrac_ind, float spec_expo)
+t_material 	c_material(__m128 color, vect4f albedo, float refrac_ind, float spec_expo)
 {
 	t_material material;
 
