@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:19:09 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 13:48:44 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/05 08:07:12 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,15 +40,15 @@ void	add_objet(t_list **alst, char *str, t_material material)
 		a = atof(tab[atoi(array[1]) - 1][1]) / div ;
 		b = atof(tab[atoi(array[1]) - 1][2]) / div ;
 		c = atof(tab[atoi(array[1]) - 1][3]) / div ;
-		vect3f m = c_vect3f(a - x,  b - y,  c - z);
+		__m128 m = _mm_setr_ps(a - x,  b - y,  c - z, 0.);
 		a = atof(tab[atoi(array[2]) - 1][1]) / div ;
 		b = atof(tab[atoi(array[2]) - 1][2]) / div ;
 		c = atof(tab[atoi(array[2]) - 1][3]) / div ;
-		vect3f n = c_vect3f(a - x, b - y, c - z);
+		__m128 n = _mm_setr_ps(a - x, b - y, c - z, 0.);
 		a = atof(tab[atoi(array[3]) - 1][1]) / div ;
 		b = atof(tab[atoi(array[3]) - 1][2]) / div ;
 		c = atof(tab[atoi(array[3]) - 1][3]) / div ;
-		vect3f o = c_vect3f(a - x, b - y, c - z);
+		__m128 o = _mm_setr_ps(a - x, b - y, c - z, 0.);
 		c_triangle(alst, m, n, o, material);
 	}
 	free(tab);

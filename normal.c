@@ -16,7 +16,7 @@ __m128		get_normal(t_ray ray, t_obj *obj, __m128 hit, float dist_i)
 	}
 	else if (obj->type == 'k')
 	{
-				k = tan(((CONE->a / 2) * M_PI) / 180);
+				k = tan(((CONE->a / 3) * M_PI) / 180);
 				m = v_dot(ray.dir, normalize(CYLINDER->rot)) * dist_i + v_dot(v_minus(ray.orig, CYLINDER->pos),normalize(CYLINDER->rot));
 				return (normalize((v_minus(v_minus(hit,CYLINDER->pos), v_mult(v_mult(normalize(CYLINDER->rot), m), 1+k*k)))));
 	}
