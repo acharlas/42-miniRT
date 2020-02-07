@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/07 11:07:20 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/04 15:56:25 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@
 #define CONE ((t_cone *)obj->data)
 #define TRIANGLE ((t_triangle *)obj->data)
 #define	LIGHT ((t_light *)(listlight->obj->data))
-#define Width 2560/2
-#define Height 1450/2
+#define Width 1024
+#define Height 768
 
 typedef	struct s_vect4f
 {
@@ -147,7 +147,7 @@ t_scene			scene_intersect(t_ray ray, const t_list *listobj);
 __m128			cast_ray(t_ray ray, const t_list *listobj, const t_list *listlight, int depth);
 __m128			get_normal(t_ray ray, t_obj *obj, __m128 hit, float dist_i);
 void			add_objet(t_list **alst, char *str, t_material material);
-int	render(t_list *listobj, t_list *listlight, void *mlx_ptr, void *mlx_win);
+void	render(t_list *listobj, t_list *listlight, void *mlx_ptr, void *mlx_win);
 int				ft_isdigit(int c);
 unsigned int	ft_strlcpy(char *dest,const char *src, unsigned int size);
 __m128			v_cross(__m128 a, __m128 b);
@@ -191,5 +191,4 @@ void			c_triangle(t_list **alst, __m128 c1, __m128 c2, __m128 c3,t_material mate
 void	ft_yaw(float angle, float **vue);
 void	ft_pitch(float angle, float **vue);
 void	ft_roll(float angle, float **vue);
-__m128	antiAliasing(size_t nb_sample, __m128 color, int x, int y, float fov, t_list *listobj, t_list *listlight);
 #endif
