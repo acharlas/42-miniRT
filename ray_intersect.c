@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 20:28:57 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/05 08:17:07 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/07 12:32:14 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,13 +61,9 @@ float	ray_intersect_plane(const __m128 orig, const __m128 dir, const t_plane pla
 	__m128 polo = v_minus(plane.pos, orig);
 	float t0;
 
-	if (denom < 0.01)
-	{
 		t0 = v_dot(polo, n) / denom;
-		__m128 pt = v_plus(orig,v_mult(dir, t0));
 		if	(t0 > 0)
 			return (t0);
-	}
 	return (FLT_MAX);
 }
 
@@ -89,11 +85,11 @@ float	ray_intersect_cylinder(const __m128 orig, const __m128 dir, const t_cylind
 	{
 		t0 = x1;
 		float m = v_dot(dir, normalize(cylinder.rot)) * t0 + v_dot(v_minus(orig, cylinder.pos),normalize(cylinder.rot));
-		if (m < 0 || m > cylinder.h)
+		if (m < -cylinder.h / 2 || m > cylinder.h / 2)
 		{
 			t0 = x2;
 			float m = v_dot(dir, normalize(cylinder.rot)) * t0 + v_dot(v_minus(orig, cylinder.pos),normalize(cylinder.rot));
-			if (m < 0 || m > cylinder.h)
+			if (m < -cylinder.h / 2 || m > cylinder.h / 2)
 				return (FLT_MAX);
 			return (t0);
 		}
@@ -103,11 +99,11 @@ float	ray_intersect_cylinder(const __m128 orig, const __m128 dir, const t_cylind
 	{
 		t0 = x2;
 		float m = v_dot(dir, normalize(cylinder.rot)) * t0 + v_dot(v_minus(orig, cylinder.pos),normalize(cylinder.rot));
-		if (m < 0 || m > cylinder.h)
+		if (m < -cylinder.h / 2 || m > cylinder.h / 2)
 		{
 			t0 = x1;
 			float m = v_dot(dir, normalize(cylinder.rot)) * t0 + v_dot(v_minus(orig, cylinder.pos),normalize(cylinder.rot));
-			if (m < 0 || m > cylinder.h)
+			if (m < -cylinder.h / 2 || m > cylinder.h / 2)
 				return (FLT_MAX);
 			return (t0);
 		}
@@ -131,7 +127,7 @@ float	ray_intersect_cone(const __m128 orig, const __m128 dir, const t_cone cone)
 		return (FLT_MAX);
 	float x1 = (-b + sqrtf(delta)) / (a * 2);
 	float x2 = (-b - sqrtf(delta)) / (a * 2);
-	if (x1 < x2 && x1 > 0)
+	if (x1 < x2)
 	{
 		t0 = x1;
 		return (t0);

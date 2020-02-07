@@ -6,7 +6,11 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:20:04 by acharlas          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2020/02/07 11:30:41 by rdeban           ###   ########.fr       */
+=======
+/*   Updated: 2020/02/07 11:47:20 by acharlas         ###   ########.fr       */
+>>>>>>> a8ecfbd10c44f965a8af7724cd6b0df7844e3970
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +24,8 @@ int	render(t_par *par)
 	const float		fov = M_PI/3;
 	int x, y;
 	int bits, size, end;
-	unsigned int	color;
-	__m128		vue;
+	__m128	color;
+	__m128	vue;
 
 	if (par->state != 2)
 		return (1);
@@ -36,11 +40,12 @@ int	render(t_par *par)
 		{
 			vue = _mm_setr_ps((x + 0.5) - Width / 2, - (y + 0.5) + Height / 2, - Height / (2. * tan(fov / 2.)), 0.);
 			t_ray ray = {_mm_setr_ps(0, 0, 0, 0), normalize(vue)};
-			color = color_to_int(cast_ray(ray, par->listobj, par->listlight, 0));
-			framebuffer[x + y * size / 4] = color;
+			color = antiAliasing(1, cast_ray(ray, par->listobj, par->listlight, 0), x, y, fov, par->listobj, par->listlight);
+			framebuffer[x + y * size / 4] = color_to_int(color);
 			//mlx_pixel_put(mlx_ptr, mlx_win, x, y, color);
 			y++;
 			//printf("x %d - y %d", x, y);
+
 		}
 		x++;
 	}
