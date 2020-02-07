@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 17:19:00 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/07 11:23:56 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # include <fcntl.h>
 # include "get_next_line.h"
 # include <immintrin.h>
+#include "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers/X11/X.h"
+# include </Users/rdeban/.brew/include/gperftools/profiler.h>
 #define SPHERE ((t_sphere *)obj->data)
 #define PLANE ((t_plane *)obj->data)
 #define CYLINDER ((t_cylinder *)obj->data)
@@ -140,14 +142,24 @@ typedef struct s_scene
 	t_material material;
 }				t_scene;
 
-;
+typedef struct s_par
+{
+	void	*mlx_ptr;
+	void	*win_ptr;
+	t_list	*listobj;
+	t_list	*listlight;
+	char	state;
+}				t_par;
+
+int				deal_key(int key, t_par *par);
+int				deal_button(int button, int x, int y, t_par *par);
 __m128			reflect(const __m128 I, const __m128 n);
 __m128			refract(const __m128 I, const __m128 n, const float eta_t, const float eta_i);
 t_scene			scene_intersect(t_ray ray, const t_list *listobj);
 __m128			cast_ray(t_ray ray, const t_list *listobj, const t_list *listlight, int depth);
 __m128			get_normal(t_ray ray, t_obj *obj, __m128 hit, float dist_i);
 void			add_objet(t_list **alst, char *str, t_material material);
-void	render(t_list *listobj, t_list *listlight, void *mlx_ptr, void *mlx_win);
+int				render(t_par *par);
 int				ft_isdigit(int c);
 unsigned int	ft_strlcpy(char *dest,const char *src, unsigned int size);
 __m128			v_cross(__m128 a, __m128 b);

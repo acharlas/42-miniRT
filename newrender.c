@@ -6,14 +6,14 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:20:04 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 18:55:12 by raphael          ###   ########.fr       */
+/*   Updated: 2020/02/07 11:30:41 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniRT.h"
 
 
-void	render(t_list *listobj, t_list *listlight, void *mlx_ptr, void *mlx_win)
+int	render(t_par *par)
 {
 	unsigned int	*framebuffer;
 	void			*framebuffer_pre;
@@ -23,9 +23,12 @@ void	render(t_list *listobj, t_list *listlight, void *mlx_ptr, void *mlx_win)
 	unsigned int	color;
 	__m128		vue;
 
-	framebuffer_pre = mlx_new_image(mlx_ptr, Width, Height);
+	if (par->state != 2)
+		return (1);
+	framebuffer_pre = mlx_new_image(par->mlx_ptr, Width, Height);
 	framebuffer = (unsigned int *)mlx_get_data_addr(framebuffer_pre, &bits, &size, &end);
 	x = 0;
+	//ProfilerStart("Perf_log");
 	while (x < Width)
 	{
 		y = 0;
@@ -33,7 +36,7 @@ void	render(t_list *listobj, t_list *listlight, void *mlx_ptr, void *mlx_win)
 		{
 			vue = _mm_setr_ps((x + 0.5) - Width / 2, - (y + 0.5) + Height / 2, - Height / (2. * tan(fov / 2.)), 0.);
 			t_ray ray = {_mm_setr_ps(0, 0, 0, 0), normalize(vue)};
-			color = color_to_int(cast_ray(ray, listobj, listlight, 0));
+			color = color_to_int(cast_ray(ray, par->listobj, par->listlight, 0));
 			framebuffer[x + y * size / 4] = color;
 			//mlx_pixel_put(mlx_ptr, mlx_win, x, y, color);
 			y++;
@@ -41,6 +44,9 @@ void	render(t_list *listobj, t_list *listlight, void *mlx_ptr, void *mlx_win)
 		}
 		x++;
 	}
-	mlx_put_image_to_window(mlx_ptr, mlx_win, framebuffer_pre, 0, 0);
-	//mlx_destroy_image(void *mlx_ptr, void *img_ptr)
+	//ProfilerStop();
+	mlx_put_image_to_window(par->mlx_ptr, par->win_ptr, framebuffer_pre, 0, 0);
+	mlx_destroy_image(par->mlx_ptr, framebuffer_pre);
+	par->state = 0;
+	return (0);
 }
