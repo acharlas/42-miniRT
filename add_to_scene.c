@@ -1,4 +1,5 @@
 #include "miniRT.h"
+#include <stdlib.h>
 
 void add_object_to_scene(__m128 camera_pos, t_obj *obj, t_list *listobj)
 {
@@ -44,11 +45,17 @@ int deal_button(int button, int x, int y, t_par *par)
 {
 	char *a;
 	__m128 vue;
-	t_material redrubber = c_material(_mm_setr_ps(1, 0.96, 0.0, 0.), c_vect4f(0.38, 0.02, 0.0, 0), 1.0, 10.);
+	__m128 center;
+	t_sphere tmp;
+	t_material mirroir = c_material(_mm_setr_ps(1, 1, 1, 0.), c_vect4f(0, 10.0, 0.8, 0), 1.0, 1425.);
+	t_material redrubber = c_material(_mm_setr_ps(1, 0.96, 0.0, 0.), c_vect4f(0.38, 0.1, 0.1, 0), 1.0, 25.);
+	t_material glass = c_material(_mm_setr_ps(0.6, 0.9, 0.8, 0.), c_vect4f(0, 0.5, 0.1, 0.8), 1.5, 125.);
 	if (button == 1 && par->state == 1)
-		//vue = _mm_setr_ps((x + 0.5) - Width / 2, - (y + 0.5) + Height / 2, 25, 0.);
-		c_sphere(&par->listobj, _mm_setr_ps(-1, -2.6, -12, 0.), redrubber, 1.2);
-		//c_sphere(&par->listobj, _mm_sub_ps(_mm_setzero_ps(), vue), redrubber, 1);
+		vue = normalize(_mm_setr_ps((x + 0.5) - Width / 2, - (y + 0.5) + Height / 2, - Height / (2. * tan(FOV / 2.)), 0.));
+		center = v_plus(_mm_setzero_ps(), v_mult(vue, 20));
+		//c_sphere(&par->listobj, _mm_setr_ps(-1, -2.6, -12, 0.), redrubber, 1.2);
+		//c_sphere(&par->listobj, center, x % 2 ? mirroir : redrubber, 1);
+		c_cylinder(&par->listobj, center, _mm_setr_ps(arc4random_uniform(36)/10., arc4random_uniform(36)/10., arc4random_uniform(36)/10., 0), glass, 0.5, 15);
 	par->state = 2;
 	return (0);
 }

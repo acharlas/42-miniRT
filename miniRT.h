@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/07 12:38:20 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/07 14:09:29 by rdeban           ###   ########.fr       */
 /*   Updated: 2020/02/07 11:07:20 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -33,8 +33,9 @@
 #define CONE ((t_cone *)obj->data)
 #define TRIANGLE ((t_triangle *)obj->data)
 #define	LIGHT ((t_light *)(listlight->obj->data))
-#define Width 2560/2
-#define Height 1450/2
+#define Width 2560
+#define Height 1440
+#define FOV M_PI/3
 
 typedef	struct s_vect4f
 {
