@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/07 11:02:50 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/07 11:47:16 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int		main(void)
 	c_cylinder(&objet, _mm_setr_ps(0, 0,-15, 0.), _mm_setr_ps(0,1,0, 0.), plane, 1, 5);
 	c_cylinder(&objet, _mm_setr_ps(0, 2.6,-13, 0.), _mm_setr_ps(2,1,0, 0.), mirroir, 0.2, 50);
 	c_cone(&objet, _mm_setr_ps(-10, 5, -30, 0.), _mm_setr_ps(1, 1, 0, 0.), plane, 30);
-	c_plane(&objet, _mm_setr_ps(0, -25, 0, 0.), _mm_setr_ps(0, 1, 1, 0.), plane);
+	c_plane(&objet, _mm_setr_ps(0, -4, 0, 0.), _mm_setr_ps(0, 1, 0, 0.), plane);
 	c_sphere(&objet, _mm_setr_ps(-1, 2.6, -12, 0.), redrubber, 1.2);
 	c_sphere(&objet, _mm_setr_ps(0, 0, -16, 0.), ivoire, 2);
 	c_sphere(&objet, _mm_setr_ps(3, 0, -15, 0.), glass, 3);

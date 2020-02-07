@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 20:28:57 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/07 11:10:15 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/07 12:32:14 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,13 +61,9 @@ float	ray_intersect_plane(const __m128 orig, const __m128 dir, const t_plane pla
 	__m128 polo = v_minus(plane.pos, orig);
 	float t0;
 
-	if (denom < 0.01)
-	{
 		t0 = v_dot(polo, n) / denom;
-		__m128 pt = v_plus(orig,v_mult(dir, t0));
 		if	(t0 > 0)
 			return (t0);
-	}
 	return (FLT_MAX);
 }
 

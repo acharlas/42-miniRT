@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:20:04 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/07 11:35:16 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/07 11:47:20 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	render(t_list *listobj, t_list *listlight, void *mlx_ptr, void *mlx_win)
 		{
 			vue = _mm_setr_ps((x + 0.5) - Width / 2, - (y + 0.5) + Height / 2, - Height / (2. * tan(fov / 2.)), 0.);
 			t_ray ray = {_mm_setr_ps(0, 0, 0, 0), normalize(vue)};
-			color = antiAliasing(3, cast_ray(ray, listobj, listlight, 0), x, y, fov, listobj, listlight);
+			color = antiAliasing(1, cast_ray(ray, listobj, listlight, 0), x, y, fov, listobj, listlight);
 			framebuffer[x + y * size / 4] = color_to_int(color);
 			//mlx_pixel_put(mlx_ptr, mlx_win, x, y, color);
 			y++;
