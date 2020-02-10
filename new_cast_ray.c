@@ -6,12 +6,22 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/21 16:18:31 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/04 16:55:53 by acharlas         ###   ########.fr       */
+/*   Updated: 2020/02/10 13:37:31 by rdeban           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniRT.h"
 #include <string.h>
+
+void	cast_ray_thread(void *argus)
+{
+	t_args *args = (t_args *)argus;
+	__m128 vue = _mm_setr_ps((args->x + 0.5) - Width / 2, - (args->y + 0.5) + Height / 2, - Height / (2. * tan(FOV / 2.)), 0.);
+	t_ray ray = {_mm_setr_ps(0, 0, 0, 0), normalize(vue)};
+	*args->pixel = color_to_int(cast_ray(ray, args->par->listobj, args->par->listlight, 0));
+	printf("rendering for pixels : %d - %d\n", args->x , args->y);
+	fflush(stdout);
+}
 
 __m128	reflected_color(__m128 *dir, const t_list *listobj, const t_list *listlight, t_scene scene, int depth)
 {

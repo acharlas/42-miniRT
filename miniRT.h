@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 16:13:03 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/07 14:09:29 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/10 13:28:53 by rdeban           ###   ########.fr       */
 /*   Updated: 2020/02/07 11:07:20 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -16,7 +16,7 @@
 
 # include <stdarg.h>
 # include <math.h>
-# include <mlx.h>
+# include "minilibx_mms_20191126_beta/mlx.h"
 # include <math.h>
 # include <stdio.h>
 # include <stdlib.h>
@@ -27,14 +27,15 @@
 # include <immintrin.h>
 #include "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers/X11/X.h"
 # include </Users/rdeban/.brew/include/gperftools/profiler.h>
+#include <pthread.h>
 #define SPHERE ((t_sphere *)obj->data)
 #define PLANE ((t_plane *)obj->data)
 #define CYLINDER ((t_cylinder *)obj->data)
 #define CONE ((t_cone *)obj->data)
 #define TRIANGLE ((t_triangle *)obj->data)
 #define	LIGHT ((t_light *)(listlight->obj->data))
-#define Width 2560
-#define Height 1440
+#define Width 100
+#define Height 100
 #define FOV M_PI/3
 
 typedef	struct s_vect4f
@@ -150,8 +151,17 @@ typedef struct s_par
 	void	*win_ptr;
 	t_list	*listobj;
 	t_list	*listlight;
+	void	*menu_img;
 	char	state;
 }				t_par;
+
+typedef struct s_args
+{
+	unsigned int *pixel;
+	int x;
+	int y;
+	t_par 		*par;
+}				t_args;
 
 int				deal_key(int key, t_par *par);
 int				deal_button(int button, int x, int y, t_par *par);
@@ -206,4 +216,5 @@ void	ft_yaw(float angle, float **vue);
 void	ft_pitch(float angle, float **vue);
 void	ft_roll(float angle, float **vue);
 __m128	antiAliasing(size_t nb_sample, __m128 color, int x, int y, float fov, t_list *listobj, t_list *listlight);
+void	cast_ray_thread(void *args);
 #endif

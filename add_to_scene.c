@@ -32,10 +32,11 @@ int deal_key(int key, t_par *par)
 	if (key == 8)
 	{
 		par->state = 1;
+		//mlx_put_image_to_window(par->mlx_ptr, par->win_ptr, par->menu_img, 0, 0);
 		mlx_string_put(par->mlx_ptr, par->win_ptr, 10, Height - 100, 0x000000, "Press the key corresponding to \n the object you wish to add : {s = sphere}");
 	}
-	else if (key == 1 && par->state == 1)
-		mlx_string_put(par->mlx_ptr, par->win_ptr, 10, Height - 90, 0x000000, "You are now adding a sphere, please use the mouse to choose where to add the sphere");
+	//else if (key == 1 && par->state == 1)
+	//	mlx_string_put(par->mlx_ptr, par->win_ptr, 10, Height - 90, 0x000000, "You are now adding a sphere, please use the mouse to choose where to add the sphere");
 	else if (key == 53)
 		exit(0);
 	return (0);

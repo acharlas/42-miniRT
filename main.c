@@ -6,7 +6,7 @@
 /*   By: acharlas <acharlas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/27 17:02:26 by acharlas          #+#    #+#             */
-/*   Updated: 2020/02/07 14:28:30 by rdeban           ###   ########.fr       */
+/*   Updated: 2020/02/10 13:33:03 by rdeban           ###   ########.fr       */
 /*   Updated: 2020/02/07 11:47:16 by acharlas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -16,10 +16,11 @@
 
 int		main(void)
 {
-	const int width = 1024;
-	const int height = 768;
 	void *mlx_ptr = mlx_init();
 	void *mlx_win = mlx_new_window(mlx_ptr, Width, Height, "miniRT");
+	int a, b;
+	void *menu1_addr = mlx_png_file_to_image(mlx_ptr, "Menu1.png", &a, &b);
+	void *menu1 = mlx_new_image(mlx_ptr, 261, 221);
 
 	
 	t_list *objet = NULL;
@@ -48,13 +49,11 @@ int		main(void)
 	c_light(&listlight, _mm_setr_ps(30, 20, 30, 0.), _mm_setr_ps(1, 1, 1, 0.), 0.8);
 	//c_light(&listlight, _mm_setzero_ps(), _mm_setr_ps(1, 1, 1, 0.), 2.1);
 	//add_objet(&objet, "objet/duck.obj", redrubber);
-	t_par par = {mlx_ptr, mlx_win, objet, listlight, 2};
+	t_par par = {mlx_ptr, mlx_win, objet, listlight, menu1_addr, 2};
 	mlx_hook(mlx_win, KeyPress, KeyPressMask, deal_key, &par);
 	mlx_hook(mlx_win, ButtonPress, ButtonPressMask, deal_button, &par);
 	mlx_loop_hook(mlx_ptr, render, &par);
 	//render(&par);
 	mlx_loop(mlx_ptr);
 	// }
-	
-	
 }
