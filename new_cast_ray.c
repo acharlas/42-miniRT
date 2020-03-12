@@ -74,7 +74,7 @@ __m128	cast_ray(t_ray ray, const t_list *listobj, const t_list *listlight, int d
 
 	scene = scene_intersect(ray, listobj);
 	if (depth > 4 || (memcmp(&scene.hit, &tmp_vec, sizeof(__m128)) == 0))
-		return (_mm_setr_ps(0.62, 0.95, 0.99, 0.));
+		return (_mm_setr_ps(0.0, 0.0, 0.0, 0.));
 	//add_color = all_color_add(listlight); // C moch
 	add_color = _mm_setr_ps(1, 1, 1, 0);
 	refract_col = refracted_color(&ray.dir, listobj, listlight, scene, depth);

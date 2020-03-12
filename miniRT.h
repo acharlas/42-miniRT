@@ -26,15 +26,14 @@
 # include "get_next_line.h"
 # include <immintrin.h>
 #include "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers/X11/X.h"
-# include </Users/rdeban/.brew/include/gperftools/profiler.h>
 #define SPHERE ((t_sphere *)obj->data)
 #define PLANE ((t_plane *)obj->data)
 #define CYLINDER ((t_cylinder *)obj->data)
 #define CONE ((t_cone *)obj->data)
 #define TRIANGLE ((t_triangle *)obj->data)
 #define	LIGHT ((t_light *)(listlight->obj->data))
-#define Width 2560
-#define Height 1440
+#define Width 600
+#define Height 600
 #define FOV M_PI/3
 
 typedef	struct s_vect4f

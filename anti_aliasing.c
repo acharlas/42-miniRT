@@ -28,7 +28,7 @@ __m128	antiAliasing(size_t nb_sample, __m128 color, int x, int y, float fov, t_l
 		while (inc[1] <= 1 - 1 / powf((float)nb_sample,2))
 		{
 			vue = _mm_setr_ps((x + inc[0]) - Width / 2, - (y + inc[1]) + Height / 2, - Height / (2. * tan(fov / 2.)), 0.);
-			t_ray ray = {_mm_setr_ps(0, 0, 0, 0), normalize(vue)};
+			t_ray ray = {_mm_setr_ps(0, 1, 35, 0), normalize(vue)};
 			color = _mm_add_ps(color, cast_ray(ray, listobj, listlight, 0));
 			inc[1] += 2 / powf((float)nb_sample,2);
 			c++;

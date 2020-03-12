@@ -31,7 +31,7 @@ t_scene		scene_intersect(t_ray ray, const t_list *listobj)
 	if (dist_i == FLT_MAX || closest == NULL)
 	{
 		out.hit = _mm_setzero_ps();
-		out.material.color = _mm_setr_ps(0.62, 0.95, 0.99, 0.);
+		out.material.color = _mm_setr_ps(0.0, 0.0, 0.0, 0.);
 	}
 	else
 	{

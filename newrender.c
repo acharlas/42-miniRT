@@ -36,8 +36,8 @@ int	render(t_par *par)
 		while (y < Height)
 		{
 			vue = _mm_setr_ps((x + 0.5) - Width / 2, - (y + 0.5) + Height / 2, - Height / (2. * tan(FOV / 2.)), 0.);
-			t_ray ray = {_mm_setr_ps(0, 0, 0, 0), normalize(vue)};
-			color = antiAliasing(1, cast_ray(ray, par->listobj, par->listlight, 0), x, y, FOV, par->listobj, par->listlight);
+			t_ray ray = {_mm_setr_ps(0, 1, 35, 0), normalize(vue)};
+			color = antiAliasing(2, cast_ray(ray, par->listobj, par->listlight, 0), x, y, FOV, par->listobj, par->listlight);
 			framebuffer[x + y * size / 4] = color_to_int(color);
 			//mlx_pixel_put(mlx_ptr, mlx_win, x, y, color);
 			y++;
